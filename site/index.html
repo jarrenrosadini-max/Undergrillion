@@ -15,10 +15,8 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-
-  <aside class="ad-rail ad-rail-left ad-slot" data-ad="rail-left" aria-hidden="true"></aside>
-  <aside class="ad-rail ad-rail-right ad-slot" data-ad="rail-right" aria-hidden="true"></aside>
+  <div class="scene" id="scene" aria-hidden="true"></div>
+  <div class="scene-shade" aria-hidden="true"></div>
 
   <div class="app">
     <header class="topbar">
@@ -30,19 +28,16 @@
       </div>
     </header>
 
-    <div class="ad-slot ad-banner" data-ad="banner-top" aria-hidden="true"></div>
-
     <nav class="modes" role="tablist">
       <button role="tab" class="mode active" data-mode="daily" aria-selected="true">Daily Set</button>
       <button role="tab" class="mode" data-mode="openmic" aria-selected="false">Open Mic</button>
     </nav>
 
-    <section class="venue" aria-live="polite">
+    <section class="venue glass" aria-live="polite">
       <div class="venue-row">
         <div>
-          <div class="venue-label">NOW PLAYING</div>
+          <div class="venue-label" id="venue-label">NOW PLAYING</div>
           <div class="venue-name" id="venue-name">Bedroom</div>
-          <div class="venue-sub" id="venue-sub">First SoundCloud upload</div>
         </div>
         <div class="venue-next" id="venue-next"></div>
       </div>
@@ -77,7 +72,7 @@
         </svg>
       </div>
 
-      <div class="card" id="card">
+      <div class="card glass" id="card">
         <div class="card-head">
           <span class="q-count" id="q-count">1 / 7</span>
           <span class="era-tag" id="era-tag">PLUGGNB</span>
@@ -85,17 +80,21 @@
         <p class="prompt" id="prompt">Loading the crates…</p>
         <div class="timer"><div class="timer-fill" id="timer-fill"></div></div>
         <form id="answer-form" autocomplete="off">
-          <input id="answer" type="text" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer…" aria-label="Your answer" maxlength="80" />
+          <div class="input-wrap">
+            <input id="answer" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer…" aria-label="Your answer" aria-autocomplete="list" aria-controls="suggest" maxlength="80" />
+            <ul class="suggest hidden" id="suggest" role="listbox"></ul>
+          </div>
           <button type="submit" class="btn-primary" id="btn-submit">Drop it</button>
         </form>
         <div class="attempts" id="attempts" aria-label="Attempts left"></div>
         <div class="feedback" id="feedback" aria-live="assertive"></div>
       </div>
 
-      <div class="result hidden" id="result" aria-live="polite">
-        <div class="tier-badge" id="tier-badge">Deep Cut</div>
+      <div class="result glass hidden" id="result" aria-live="polite">
+        <div class="tier-badge" id="tier-badge">Niche</div>
         <div class="result-answer" id="result-answer"></div>
-        <div class="result-points"><span id="result-pts">+60</span> pts · <span id="result-fans">+600</span> fans</div>
+        <div class="corrected hidden" id="corrected"></div>
+        <div class="result-points"><span id="result-pts">+40</span> pts · <span id="result-fans">+400</span> fans</div>
         <div class="rarest">
           <div class="rarest-label">Rarest answers</div>
           <ul id="rarest"></ul>
@@ -105,12 +104,34 @@
       </div>
     </main>
 
-    <section id="end" class="end hidden">
-      <div class="end-label">TONIGHT'S SHOW</div>
-      <div class="end-venue" id="end-venue">House Party</div>
-      <div class="end-score"><b id="end-pts">0</b> pts · <b id="end-fans">0</b> fans</div>
+    <section id="end" class="end glass hidden">
+      <div class="end-top">
+        <div>
+          <div class="end-label">TONIGHT'S SHOW</div>
+          <div class="end-venue" id="end-venue">House Party</div>
+        </div>
+        <div class="end-score"><b id="end-pts">0</b><span>pts</span></div>
+      </div>
       <div class="end-grid" id="end-grid"></div>
-      <ol class="end-list" id="end-list"></ol>
+
+      <div class="end-tabs" id="end-tabs" role="tablist"></div>
+      <div class="end-panel" id="end-panel">
+        <p class="ep-prompt" id="ep-prompt"></p>
+        <div class="ep-you" id="ep-you"></div>
+        <div class="chart-title rarest-label">How the answer pool breaks down</div>
+        <div class="chart" id="chart" aria-label="How the answer pool breaks down by rarity"></div>
+        <div class="chart-labels" id="chart-labels"></div>
+        <div class="ep-cols">
+          <div><div class="rarest-label">Most common answers</div><ul class="ep-list" id="ep-top"></ul></div>
+          <div><div class="rarest-label">Rarest answers</div><ul class="ep-list" id="ep-rare"></ul></div>
+        </div>
+        <form class="ep-search" id="ep-search" autocomplete="off">
+          <input id="ep-search-input" type="text" placeholder="Check an answer you thought of…" aria-label="Check an answer" autocomplete="off" spellcheck="false" />
+          <button class="btn-ghost" type="submit">Check</button>
+        </form>
+        <div class="ep-search-result" id="ep-search-result" aria-live="polite"></div>
+      </div>
+
       <div class="end-actions">
         <button class="btn-primary" id="btn-share">Share result</button>
         <button class="btn-ghost" id="btn-to-openmic">Keep playing: Open Mic</button>
@@ -118,8 +139,6 @@
       <div class="next-daily">Next Daily Set in <b id="countdown">--:--:--</b></div>
       <div class="ad-slot ad-box" data-ad="results-box" aria-hidden="true"></div>
     </section>
-
-    <div class="crowd" aria-hidden="true"><div class="crowd-inner" id="crowd"></div></div>
 
     <footer class="foot">
       Fan-made trivia. Leak questions name songs only; Undergrillion never hosts or links audio.
@@ -129,39 +148,23 @@
 
   <div class="float-layer" id="float-layer" aria-hidden="true"></div>
 
-  <div class="overlay hidden" id="venue-up" role="dialog" aria-label="New venue unlocked">
-    <div class="lights"></div>
-    <div class="venue-up-inner">
-      <div class="vu-label">NEW VENUE UNLOCKED</div>
-      <div class="vu-name" id="vu-name">Local Club</div>
-      <div class="vu-sub" id="vu-sub"></div>
-      <button class="btn-primary" id="btn-vu">Let's go</button>
-    </div>
-  </div>
-
   <div class="overlay hidden" id="help" role="dialog" aria-label="How to play">
-    <div class="modal">
+    <div class="modal glass">
       <h2>How to play</h2>
-      <p>You're an up-and-coming artist. Each prompt asks for something from the underground (2010 to now). Type <b>any correct answer</b>. <b>The rarer it is, the more fans you gain.</b></p>
+      <p>You're an up-and-coming artist. Each prompt asks for something from the underground, 2010 to now. Type <b>any correct answer</b>. <b>The rarer it is, the more fans you gain.</b> Close spellings and short forms ("carti", "lil uzi") count.</p>
       <ul class="tier-list">
-        <li><span class="tag t1">Common Ball</span> 10 pts: everyone says it</li>
-        <li><span class="tag t2">Playlist Pick</span> 25 pts</li>
-        <li><span class="tag t3">Heads Know</span> 40 pts</li>
-        <li><span class="tag t4">Deep Cut</span> 60 pts</li>
-        <li><span class="tag t5">Vault</span> 80 pts</li>
-        <li><span class="tag t6">Day One</span> 100 pts: the grail pick</li>
-        <li><span class="tag twack">Wack</span> 0 pts: you get 3 tries per prompt</li>
+        <li><span class="tag t1">Mainstream</span> 5</li>
+        <li><span class="tag t2">Common Ball</span> 10</li>
+        <li><span class="tag t3">Rare</span> 25</li>
+        <li><span class="tag t4">Niche</span> 40</li>
+        <li><span class="tag t5">Tapped In</span> 60</li>
+        <li><span class="tag t6">Elite Ball</span> 80</li>
+        <li><span class="tag t7">Day One</span> 100</li>
+        <li><span class="tag twack">Wack</span> 0 · 3 tries per prompt</li>
       </ul>
       <p><b>Daily Set:</b> 7 prompts, 25 seconds each, the same for everyone. <b>Open Mic:</b> endless practice at half the fans.</p>
-      <p>Fans unlock venues, from your bedroom all the way to the Rolling Loud main stage.</p>
+      <p>Your fans move you through real-feeling venues, from your bedroom to the Rolling Loud main stage. The room reacts to every answer, and rarer answers go harder.</p>
       <button class="btn-primary" id="btn-help-close">Got it</button>
-    </div>
-  </div>
-
-  <div class="overlay hidden" id="interstitial" role="dialog" aria-label="Break">
-    <div class="modal">
-      <div class="ad-slot ad-box" data-ad="interstitial" aria-hidden="true"></div>
-      <button class="btn-primary" id="btn-inter-close">Continue</button>
     </div>
   </div>
 

@@ -1,47 +1,57 @@
 import { CONFIG } from './config.js';
 import {
-  TIERS, FANS_PER_PT, venueFor, showFor, matchAnswer, expandQuestions, buildLeakQuestions,
-  pickDaily, rarestAnswers, localDateStr, fmt, rng, shuffle,
+  TIERS, TIER_ORDER, FANS_PER_PT, venueFor, showFor, matchAnswer, expandQuestions, buildCatalogQuestions,
+  buildDictionary, suggest, pickDaily, rarestAnswers, topAnswers, tierSpread, localDateStr, fmt, rng, shuffle,
 } from './engine.js';
+import { sceneSVG } from './scenes.js';
 
 const $ = id => document.getElementById(id);
-const STORE_KEY = 'undergrillion:v1';
+const STORE_KEY = 'undergrillion:v2';
 const ERA_LABEL = { early: 'EARLY 2010s', soundcloud: 'SOUNDCLOUD ERA', pluggnb: 'PLUGGNB', opium: 'OPIUM / RAGE', newwave: 'NEW WAVE', leaks: 'LEAKS', wildcard: 'WILDCARD' };
+// How the venue reacts per rarity: speed (s), repeats, crowd jump (px), flash opacity, zoom.
+const REACT = {
+  1: [1.6, 1, -6, 0.05, 1.01], 2: [1.2, 1, -10, 0.08, 1.015], 3: [0.9, 2, -14, 0.12, 1.02], 4: [0.7, 2, -18, 0.16, 1.03],
+  5: [0.5, 3, -24, 0.22, 1.04], 6: [0.36, 4, -30, 0.3, 1.05], 7: [0.22, 7, -38, 0.42, 1.07], tu: [1.2, 1, -10, 0.08, 1.015],
+};
 
 // ---------- State ----------
 const store = load();
 function load() {
-  try { return { fans: 0, streak: 0, lastDailyDone: null, best: 0, daily: {}, ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; }
-  catch { return { fans: 0, streak: 0, lastDailyDone: null, best: 0, daily: {} }; }
+  const base = { fans: 0, streak: 0, lastDailyDone: null, best: 0, daily: {} };
+  try {
+    const v2 = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+    if (v2) return { ...base, ...v2 };
+    const v1 = JSON.parse(localStorage.getItem('undergrillion:v1') || 'null'); // keep fans/streak from v1
+    return v1 ? { ...base, fans: v1.fans || 0, streak: v1.streak || 0, lastDailyDone: v1.lastDailyDone || null, best: v1.best || 0 } : base;
+  } catch { return base; }
 }
 function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch { /* private mode */ } }
 
-let ALL = [];
-let mode = 'daily';
-let today = localDateStr();
-let queue = [];          // questions for current run
-let qi = 0;              // index in queue
-let attemptsLeft = CONFIG.ATTEMPTS;
-let timer = null, deadline = 0, totalMs = 0;
-let answering = false;
-let omCount = 0, omEra = 'all', omRand = rng(Date.now());
-let shownFans = store.fans;
+let ALL = [], BY_ID = new Map(), DICT = [];
+let mode = 'daily', today = localDateStr();
+let queue = [], qi = 0, attemptsLeft = CONFIG.ATTEMPTS;
+let timer = null, deadline = 0, totalMs = 0, answering = false;
+let omCount = 0, omEra = 'all';
+const omRand = rng(Date.now());
+let shownFans = store.fans, sceneKey = null, endIdx = 0, sugIdx = -1;
 
 // ---------- Boot ----------
 init();
 async function init() {
   if (CONFIG.ADS_ENABLED) document.body.classList.add('ads-on');
+  setScene(venueFor(store.fans).scene, false);
   try {
-    const [qRes, lRes] = await Promise.all([fetch('data/questions.json'), fetch('data/leaks.json')]);
-    const qData = await qRes.json(), lData = await lRes.json();
-    ALL = [...expandQuestions(qData.questions), ...buildLeakQuestions(lData)];
+    const get = u => fetch(u).then(r => (r.ok ? r.json() : null)).catch(() => null);
+    const [qData, lData, cData] = await Promise.all([get('data/questions.json'), get('data/leaks.json'), get('data/catalog.json')]);
+    ALL = [...expandQuestions(qData.questions), ...buildCatalogQuestions(cData, lData)];
+    BY_ID = new Map(ALL.map(q => [q.id, q]));
+    DICT = buildDictionary(ALL, cData);
   } catch (e) {
     $('prompt').textContent = 'Could not load the question crates. Refresh to try again.';
     console.error(e); return;
   }
   bindUI();
   renderTop(false);
-  renderCrowd();
   if (!localStorage.getItem(STORE_KEY)) openHelp();
   startDaily();
   setInterval(tickCountdown, 1000);
@@ -49,7 +59,10 @@ async function init() {
 
 function bindUI() {
   $('answer-form').addEventListener('submit', e => { e.preventDefault(); submit(); });
-  $('answer').addEventListener('input', () => $('mic').classList.toggle('live', $('answer').value.length > 0));
+  $('answer').addEventListener('input', onType);
+  $('answer').addEventListener('keydown', onKeyNav);
+  $('answer').addEventListener('blur', () => setTimeout(hideSuggest, 120));
+  $('suggest').addEventListener('mousedown', e => { const li = e.target.closest('li'); if (li) { e.preventDefault(); pickSuggestion(li.textContent); } });
   $('btn-next').addEventListener('click', next);
   document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => switchMode(b.dataset.mode)));
   document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
@@ -59,20 +72,41 @@ function bindUI() {
   $('om-timer').addEventListener('change', () => { if (answering) restartTimer(); });
   $('btn-help').addEventListener('click', openHelp);
   $('btn-help-close').addEventListener('click', () => $('help').classList.add('hidden'));
-  $('btn-vu').addEventListener('click', () => $('venue-up').classList.add('hidden'));
   $('btn-share').addEventListener('click', share);
   $('btn-to-openmic').addEventListener('click', () => switchMode('openmic'));
-  $('btn-inter-close').addEventListener('click', () => { $('interstitial').classList.add('hidden'); });
+  $('ep-search').addEventListener('submit', e => { e.preventDefault(); searchAnswer(); });
   $('btn-reset').addEventListener('click', e => {
     e.preventDefault();
-    if (confirmReset()) { localStorage.removeItem(STORE_KEY); location.reload(); }
+    if (window.confirm('Reset all fans, streaks and daily progress?')) { localStorage.removeItem(STORE_KEY); localStorage.removeItem('undergrillion:v1'); location.reload(); }
   });
   document.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !$('result').classList.contains('hidden') && document.activeElement !== $('answer')) next();
   });
 }
-function confirmReset() { return window.confirm('Reset all fans, streaks and daily progress?'); }
 function openHelp() { $('help').classList.remove('hidden'); }
+
+// ---------- Autocomplete ----------
+function onType() {
+  const v = $('answer').value;
+  $('mic').classList.toggle('live', v.length > 0);
+  const items = suggest(DICT, v);
+  sugIdx = -1;
+  if (!items.length || !answering) return hideSuggest();
+  $('suggest').innerHTML = items.map(t => `<li role="option">${esc(t)}</li>`).join('');
+  $('suggest').classList.remove('hidden');
+}
+function onKeyNav(e) {
+  const list = [...$('suggest').querySelectorAll('li')];
+  if (!list.length || $('suggest').classList.contains('hidden')) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    sugIdx = (sugIdx + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length;
+    list.forEach((li, i) => li.classList.toggle('on', i === sugIdx));
+  } else if (e.key === 'Enter' && sugIdx >= 0) { e.preventDefault(); pickSuggestion(list[sugIdx].textContent); }
+  else if (e.key === 'Escape') hideSuggest();
+}
+function pickSuggestion(t) { $('answer').value = t; hideSuggest(); $('answer').focus(); }
+function hideSuggest() { $('suggest').classList.add('hidden'); sugIdx = -1; }
 
 // ---------- Modes ----------
 function switchMode(m) {
@@ -82,73 +116,50 @@ function switchMode(m) {
   stopTimer();
   m === 'daily' ? startDaily() : startOpenMic();
 }
-
-function dailyRecord() { return (store.daily[today] ||= { results: [], done: false }); }
-
+function dailyRecord() { return (store.daily[today] ||= { ids: null, results: [], done: false }); }
 function startDaily() {
   today = localDateStr();
-  queue = pickDaily(ALL, today);
   const rec = dailyRecord();
+  if (!rec.ids) { rec.ids = pickDaily(ALL, today).map(q => q.id); save(); }
+  queue = rec.ids.map(id => BY_ID.get(id)).filter(Boolean);
+  if (queue.length < rec.ids.length) { rec.ids = pickDaily(ALL, today).map(q => q.id); queue = rec.ids.map(id => BY_ID.get(id)); rec.results = []; save(); }
   if (rec.done) return showEnd();
   qi = rec.results.length;
-  showStage();
-  ask();
+  showStage(); ask();
 }
-
 function startOpenMic() {
-  const pool = ALL.filter(q => omEra === 'all' || q.era === omEra);
-  queue = shuffle(pool, omRand);
-  qi = 0;
-  showStage();
-  ask();
+  queue = shuffle(ALL.filter(q => omEra === 'all' || q.era === omEra), omRand);
+  qi = 0; showStage(); ask();
 }
-
-function showStage() {
-  $('end').classList.add('hidden');
-  $('stage').classList.remove('hidden');
-}
+function showStage() { $('end').classList.add('hidden'); $('stage').classList.remove('hidden'); }
 
 // ---------- Question flow ----------
 function current() { return queue[qi]; }
-
 function ask() {
   const q = current();
   if (!q) return mode === 'daily' ? finishDaily() : startOpenMic();
-  answering = true;
-  attemptsLeft = CONFIG.ATTEMPTS;
+  answering = true; attemptsLeft = CONFIG.ATTEMPTS;
   setTier(null);
-  $('card').classList.remove('hidden');
-  $('result').classList.add('hidden');
+  $('card').classList.remove('hidden'); $('result').classList.add('hidden');
   $('q-count').textContent = mode === 'daily' ? `${qi + 1} / ${queue.length}` : `OPEN MIC · #${omCount + 1}`;
   $('era-tag').textContent = ERA_LABEL[q.era] || q.era.toUpperCase();
   $('prompt').textContent = q.prompt;
   $('feedback').textContent = '';
-  $('answer').value = '';
-  $('answer').disabled = false;
-  $('btn-submit').disabled = false;
-  $('mic').classList.remove('live');
-  renderAttempts();
-  restartTimer();
+  $('answer').value = ''; $('answer').disabled = false; $('btn-submit').disabled = false;
+  $('mic').classList.remove('live'); hideSuggest();
+  renderAttempts(); restartTimer();
   setTimeout(() => $('answer').focus({ preventScroll: true }), 50);
 }
-
-function renderAttempts() {
-  $('attempts').innerHTML = Array.from({ length: CONFIG.ATTEMPTS }, (_, i) => `<i class="${i >= attemptsLeft ? 'used' : ''}"></i>`).join('');
-}
-
+function renderAttempts() { $('attempts').innerHTML = Array.from({ length: CONFIG.ATTEMPTS }, (_, i) => `<i class="${i >= attemptsLeft ? 'used' : ''}"></i>`).join(''); }
 function timerOn() { return mode === 'daily' || $('om-timer').checked; }
-
 function restartTimer() {
   stopTimer();
   const fill = $('timer-fill');
   if (!timerOn()) { fill.style.transform = 'scaleX(1)'; fill.classList.remove('low'); return; }
-  totalMs = CONFIG.DAILY_SECONDS * 1000;
-  deadline = performance.now() + totalMs;
+  totalMs = CONFIG.DAILY_SECONDS * 1000; deadline = performance.now() + totalMs;
   const tick = () => {
-    const left = deadline - performance.now();
-    const frac = Math.max(0, left / totalMs);
-    fill.style.transform = `scaleX(${frac})`;
-    fill.classList.toggle('low', frac < 0.25);
+    const left = deadline - performance.now(), frac = Math.max(0, left / totalMs);
+    fill.style.transform = `scaleX(${frac})`; fill.classList.toggle('low', frac < 0.25);
     if (left <= 0) { stopTimer(); resolve(null, true); return; }
     timer = requestAnimationFrame(tick);
   };
@@ -160,11 +171,11 @@ function submit() {
   if (!answering) return;
   const val = $('answer').value.trim();
   if (!val) return;
+  hideSuggest();
   const q = current();
-  const hit = matchAnswer(val, q.answers, q.whitelist);
+  const hit = matchAnswer(val, q.answers, q.whitelist, q.kind);
   if (hit) return resolve(hit, false, val);
-  attemptsLeft--;
-  renderAttempts();
+  attemptsLeft--; renderAttempts();
   $('card').classList.remove('shake'); void $('card').offsetWidth; $('card').classList.add('shake');
   if (attemptsLeft <= 0) return resolve(null, false, val);
   $('feedback').textContent = `Wack. "${val}" doesn't count. ${attemptsLeft} ${attemptsLeft === 1 ? 'try' : 'tries'} left.`;
@@ -173,52 +184,73 @@ function submit() {
 
 function resolve(hit, timedOut, typed = '') {
   if (!answering) return;
-  answering = false;
-  stopTimer();
-  $('answer').disabled = true; $('btn-submit').disabled = true;
-  $('mic').classList.remove('live');
+  answering = false; stopTimer(); hideSuggest();
+  $('answer').disabled = true; $('btn-submit').disabled = true; $('mic').classList.remove('live');
   const q = current();
   const tierKey = hit ? hit.tier : 'wack';
   const tier = TIERS[tierKey];
   const rate = mode === 'daily' ? 1 : CONFIG.OPEN_MIC_FAN_RATE;
-  const pts = tier.pts;
-  const fansGain = Math.round(pts * FANS_PER_PT * rate);
-
+  const pts = tier.pts, fansGain = Math.round(pts * FANS_PER_PT * rate);
   const before = venueFor(store.fans).idx;
   store.fans += fansGain;
-  if (mode === 'daily') {
-    dailyRecord().results.push({ id: q.id, tier: tierKey, pts, answer: hit ? hit.answer.text : null });
-  } else omCount++;
+  if (mode === 'daily') dailyRecord().results.push({ id: q.id, tier: tierKey, pts, answer: hit ? hit.answer.text : null, typed });
+  else omCount++;
   save();
 
-  // Result UI
   setTier(tier.cls);
   $('tier-badge').textContent = timedOut ? 'Time!' : tier.name;
   $('result-answer').textContent = hit ? hit.answer.text : (timedOut ? 'The beat ran out.' : `"${typed}" isn't on the list.`);
-  $('result-pts').textContent = `+${pts}`;
-  $('result-fans').textContent = `+${fmt(fansGain)}`;
-  $('rarest').innerHTML = rarestAnswers(q).map(a =>
-    `<li><span>${esc(a.text)}</span><span class="tag ${TIERS[a.tier].cls}">${TIERS[a.tier].name}</span></li>`).join('');
+  $('corrected').classList.toggle('hidden', !(hit && hit.corrected));
+  if (hit && hit.corrected) $('corrected').textContent = `You typed "${typed}", which counted as ${hit.answer.text}.`;
+  $('result-pts').textContent = `+${pts}`; $('result-fans').textContent = `+${fmt(fansGain)}`;
+  $('rarest').innerHTML = rarestAnswers(q).map(a => `<li><span>${esc(a.text)}</span>${tag(a.tier)}</li>`).join('');
   $('fact').textContent = q.fact || '';
   $('btn-next').textContent = (mode === 'daily' && qi === queue.length - 1) ? 'See the show ›' : 'Next ›';
-  $('card').classList.add('hidden');
-  $('result').classList.remove('hidden');
+  $('card').classList.add('hidden'); $('result').classList.remove('hidden');
   $('btn-next').focus({ preventScroll: true });
 
   celebrate(tierKey, fansGain);
+  react(tierKey);
   renderTop(true);
-  renderCrowd();
   const after = venueFor(store.fans);
-  if (after.idx > before) setTimeout(() => venueUp(after), 1100);
+  if (after.idx > before) setTimeout(() => { setScene(after.scene, true); flagNewVenue(); }, 900);
 }
-
 function next() {
   if ($('result').classList.contains('hidden')) return;
-  qi++;
-  if (mode === 'openmic' && CONFIG.ADS_ENABLED && omCount > 0 && omCount % CONFIG.INTERSTITIAL_EVERY === 0) {
-    $('interstitial').classList.remove('hidden');
-  }
-  ask();
+  qi++; ask();
+}
+
+// ---------- Venue scene ----------
+function setScene(key, animate) {
+  if (key === sceneKey) return;
+  sceneKey = key;
+  const host = $('scene');
+  const layer = document.createElement('div');
+  layer.className = 'scene-layer' + (animate ? ' enter' : ' current');
+  layer.innerHTML = sceneSVG(key);
+  const old = host.querySelector('.scene-layer.current');
+  host.appendChild(layer);
+  if (animate) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      layer.classList.remove('enter'); layer.classList.add('current');
+      if (old) { old.classList.remove('current'); old.classList.add('leave'); setTimeout(() => old.remove(), 1900); }
+    }));
+  } else if (old) old.remove();
+}
+function react(tierKey) {
+  const host = $('scene');
+  host.classList.remove('hit', 'miss'); void host.offsetWidth;
+  if (tierKey === 'wack') { host.classList.add('miss'); return; }
+  const [s, reps, jump, flashO, zoom] = REACT[tierKey] || REACT[1];
+  host.style.setProperty('--hit', `${s}s`); host.style.setProperty('--reps', reps);
+  host.style.setProperty('--jump', `${jump}px`); host.style.setProperty('--flash', flashO); host.style.setProperty('--zoom', zoom);
+  host.classList.add('hit');
+  clearTimeout(react._t); react._t = setTimeout(() => host.classList.remove('hit'), s * reps * 1000 + 400);
+}
+function flagNewVenue() {
+  const l = $('venue-label'); l.textContent = 'NEW VENUE UNLOCKED'; l.classList.add('new');
+  setTimeout(() => { l.textContent = 'NOW PLAYING'; l.classList.remove('new'); }, 4500);
+  confetti();
 }
 
 // ---------- Daily end ----------
@@ -229,38 +261,53 @@ function finishDaily() {
     const y = new Date(); y.setDate(y.getDate() - 1);
     store.streak = store.lastDailyDone === localDateStr(y) ? store.streak + 1 : 1;
     store.lastDailyDone = today;
-    const total = rec.results.reduce((s, r) => s + r.pts, 0);
-    store.best = Math.max(store.best, total);
+    store.best = Math.max(store.best, rec.results.reduce((s, r) => s + r.pts, 0));
     save();
   }
   showEnd();
 }
-
 function showEnd() {
   stopTimer();
   const rec = dailyRecord();
   const total = rec.results.reduce((s, r) => s + r.pts, 0);
-  $('stage').classList.add('hidden');
-  $('end').classList.remove('hidden');
+  $('stage').classList.add('hidden'); $('end').classList.remove('hidden');
   $('end-venue').textContent = showFor(total).name;
   $('end-pts').textContent = total;
-  $('end-fans').textContent = fmt(total * FANS_PER_PT);
   $('end-grid').textContent = rec.results.map(r => TIERS[r.tier].emoji).join('');
-  const qs = pickDaily(ALL, today);
-  $('end-list').innerHTML = rec.results.map((r, i) =>
-    `<li>${esc(qs[i]?.prompt || '')}: <b>${r.answer ? esc(r.answer) : '—'}</b> <span class="tag ${TIERS[r.tier].cls}">${TIERS[r.tier].name}</span></li>`).join('');
-  renderTop(false);
-  tickCountdown();
+  $('end-tabs').innerHTML = rec.results.map((r, i) => `<button class="end-tab ${TIERS[r.tier].cls}" data-i="${i}" role="tab">${i + 1}</button>`).join('');
+  $('end-tabs').querySelectorAll('.end-tab').forEach(b => b.addEventListener('click', () => showEndPanel(+b.dataset.i)));
+  showEndPanel(0);
+  renderTop(false); tickCountdown();
 }
-
+function showEndPanel(i) {
+  endIdx = i;
+  const rec = dailyRecord(), r = rec.results[i], q = BY_ID.get(r?.id);
+  $('end-tabs').querySelectorAll('.end-tab').forEach((b, k) => b.classList.toggle('on', k === i));
+  if (!q) { $('ep-prompt').textContent = 'This prompt has been retired.'; return; }
+  $('ep-prompt').textContent = q.prompt;
+  $('ep-you').innerHTML = r.answer ? `You said <b>${esc(r.answer)}</b> ${tag(r.tier)}` : `No answer counted${r.typed ? ` ("${esc(r.typed)}")` : ''} ${tag('wack')}`;
+  // Answer-pool chart: how many valid answers sit in each rarity tier, with your tier highlighted.
+  const spread = tierSpread(q), max = Math.max(1, ...Object.values(spread));
+  $('chart').innerHTML = TIER_ORDER.map(t => `<div class="bar ${TIERS[t].cls} ${r.tier === t ? 'you' : ''}" title="${TIERS[t].name}: ${spread[t]} answers"><i style="height:${Math.max(4, (spread[t] / max) * 100)}%"></i><span>${spread[t] || ''}</span></div>`).join('');
+  $('chart-labels').innerHTML = TIER_ORDER.map(t => `<span>${TIERS[t].name}</span>`).join('');
+  $('ep-top').innerHTML = topAnswers(q, 4).map(a => `<li><span>${esc(a.text)}</span>${tag(a.tier)}</li>`).join('');
+  $('ep-rare').innerHTML = rarestAnswers(q, 4).map(a => `<li><span>${esc(a.text)}</span>${tag(a.tier)}</li>`).join('');
+  $('ep-search-input').value = ''; $('ep-search-result').textContent = '';
+}
+function searchAnswer() {
+  const r = dailyRecord().results[endIdx], q = BY_ID.get(r?.id), v = $('ep-search-input').value.trim();
+  if (!q || !v) return;
+  const hit = matchAnswer(v, q.answers, q.whitelist, q.kind);
+  $('ep-search-result').innerHTML = hit
+    ? `<b>${esc(hit.answer.text)}</b> would have been ${tag(hit.tier)} for ${TIERS[hit.tier].pts} pts.`
+    : `"${esc(v)}" isn't on the list for this one.`;
+}
 function share() {
-  const rec = dailyRecord();
-  const total = rec.results.reduce((s, r) => s + r.pts, 0);
+  const rec = dailyRecord(), total = rec.results.reduce((s, r) => s + r.pts, 0);
   const text = `Undergrillion ${today}\n${rec.results.map(r => TIERS[r.tier].emoji).join('')}\n${total} pts · Tonight: ${showFor(total).name}\n🔥 ${store.streak} day streak\n${location.href.split('#')[0]}`;
   if (navigator.share) navigator.share({ text }).catch(() => {});
   else navigator.clipboard?.writeText(text).then(() => toast('Copied. Go flex it.'), () => toast(text));
 }
-
 function tickCountdown() {
   if ($('end').classList.contains('hidden')) return;
   const now = new Date(), mid = new Date(now); mid.setHours(24, 0, 0, 0);
@@ -269,108 +316,55 @@ function tickCountdown() {
   if (s === 0 && mode === 'daily') startDaily();
 }
 
-// ---------- Rendering & animation ----------
+// ---------- Rendering helpers ----------
+function tag(t) { const x = TIERS[t]; return `<span class="tag ${x.cls}">${x.name}</span>`; }
 function setTier(cls) {
-  const root = document.documentElement;
-  const map = { t1: '--t1', t2: '--t2', t3: '--t3', t4: '--t4', t5: '--t5', t6: '--t6', ttu: '--ttu', twack: '--twack' };
-  root.style.setProperty('--tier', cls ? `var(${map[cls]})` : 'var(--orange)');
-  $('result').className = `result ${cls || ''}` + ($('result').classList.contains('hidden') ? ' hidden' : '');
+  document.documentElement.style.setProperty('--tier', cls ? `var(--${cls})` : 'var(--orange)');
+  const res = $('result'), hidden = res.classList.contains('hidden');
+  res.className = `result glass ${cls || ''}${hidden ? ' hidden' : ''}`;
 }
-
 function renderTop(animate) {
   $('streak').textContent = store.streak;
   const v = venueFor(store.fans);
   $('venue-name').textContent = v.name;
-  $('venue-sub').textContent = v.sub;
   if (v.next) {
-    const pct = ((store.fans - v.fans) / (v.next.fans - v.fans)) * 100;
-    $('venue-fill').style.width = `${Math.min(100, pct)}%`;
+    $('venue-fill').style.width = `${Math.min(100, ((store.fans - v.fans) / (v.next.fans - v.fans)) * 100)}%`;
     $('venue-next').innerHTML = `Next: <b>${v.next.name}</b><br>${fmt(v.next.fans - store.fans)} fans to go`;
-  } else {
-    $('venue-fill').style.width = '100%';
-    $('venue-next').innerHTML = '<b>Max venue</b>';
-  }
+  } else { $('venue-fill').style.width = '100%'; $('venue-next').innerHTML = '<b>Max venue</b>'; }
   odometer($('fans-top'), shownFans, store.fans, animate ? 1200 : 0);
   shownFans = store.fans;
 }
-
 function odometer(el, from, to, ms) {
   if (!ms || matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = fmt(to); return; }
   const t0 = performance.now();
-  const step = now => {
-    const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
-    el.textContent = fmt(Math.round(from + (to - from) * e));
-    if (k < 1) requestAnimationFrame(step);
-  };
+  const step = now => { const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(Math.round(from + (to - from) * e)); if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
-
 function celebrate(tierKey, fansGain) {
-  const rings = $('rings');
-  const strength = { wack: 0, 1: 1, tu: 1, 2: 2, 3: 2, 4: 3, 5: 4, 6: 6 }[tierKey];
+  const strength = { wack: 0, 1: 1, tu: 1, 2: 1, 3: 2, 4: 2, 5: 3, 6: 4, 7: 6 }[tierKey];
   for (let i = 0; i < strength; i++) {
     const r = document.createElement('div');
-    r.className = 'ring';
-    r.style.setProperty('--ring', 'var(--tier)');
-    r.style.setProperty('--scale', String(1.8 + i * 0.35));
-    r.style.animationDelay = `${i * 120}ms`;
-    rings.appendChild(r);
-    setTimeout(() => r.remove(), 1600 + i * 120);
+    r.className = 'ring'; r.style.setProperty('--scale', String(1.8 + i * 0.35)); r.style.animationDelay = `${i * 110}ms`;
+    $('rings').appendChild(r); setTimeout(() => r.remove(), 1500 + i * 110);
   }
   if (fansGain > 0) {
-    const mic = $('mic').getBoundingClientRect();
-    const f = document.createElement('div');
-    f.className = 'floater';
-    f.textContent = `+${fmt(fansGain)} fans`;
-    f.style.left = `${mic.left + mic.width / 2}px`;
-    f.style.top = `${mic.top}px`;
-    $('float-layer').appendChild(f);
-    setTimeout(() => f.remove(), 1700);
+    const mic = $('mic').getBoundingClientRect(), f = document.createElement('div');
+    f.className = 'floater'; f.textContent = `+${fmt(fansGain)} fans`;
+    f.style.left = `${mic.left + mic.width / 2}px`; f.style.top = `${mic.top}px`;
+    $('float-layer').appendChild(f); setTimeout(() => f.remove(), 1700);
   }
-  if (tierKey === 6) {
-    document.querySelector('.app').classList.remove('shake'); void document.body.offsetWidth;
-    document.querySelector('.app').classList.add('shake');
-    confetti();
-  }
-  if (tierKey === 'wack') {
-    $('card').classList.remove('shake'); void $('card').offsetWidth; $('card').classList.add('shake');
-  }
+  if (tierKey === 7) confetti();
+  if (tierKey === 'wack') { $('card').classList.remove('shake'); void $('card').offsetWidth; $('card').classList.add('shake'); }
 }
-
 function confetti() {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const icons = ['💿', '📼', '🎤', '🔥', '💿', '⭐'];
   for (let i = 0; i < 28; i++) {
     const c = document.createElement('div');
-    c.className = 'confetti';
-    c.textContent = icons[i % icons.length];
-    c.style.left = `${Math.random() * 100}vw`;
-    c.style.animationDuration = `${1.6 + Math.random() * 1.6}s`;
-    c.style.animationDelay = `${Math.random() * 0.4}s`;
-    $('float-layer').appendChild(c);
-    setTimeout(() => c.remove(), 3800);
+    c.className = 'confetti'; c.textContent = icons[i % icons.length];
+    c.style.left = `${Math.random() * 100}vw`; c.style.animationDuration = `${1.6 + Math.random() * 1.6}s`; c.style.animationDelay = `${Math.random() * 0.4}s`;
+    $('float-layer').appendChild(c); setTimeout(() => c.remove(), 3800);
   }
 }
-
-function renderCrowd() {
-  // Crowd density grows with log(fans): 3 people in the bedroom, ~60 at the stadium.
-  const n = Math.max(3, Math.min(60, Math.round(3 + Math.log10(store.fans + 1) * 8)));
-  const hype = Math.round(n * Math.min(1, venueFor(store.fans).idx / 10));
-  const r = rng(n);
-  $('crowd').innerHTML = Array.from({ length: n }, (_, i) =>
-    `<span class="person${i % Math.max(1, Math.floor(n / Math.max(1, hype))) === 0 && hype ? ' hype' : ''}" style="height:${18 + Math.floor(r() * 16)}px;animation-delay:${(r() * 1.4).toFixed(2)}s"></span>`).join('');
-}
-
-function venueUp(v) {
-  $('vu-name').textContent = v.name;
-  $('vu-sub').textContent = v.sub;
-  $('venue-up').classList.remove('hidden');
-  confetti();
-}
-
-function toast(msg) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2400);
-}
-
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2400); }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
