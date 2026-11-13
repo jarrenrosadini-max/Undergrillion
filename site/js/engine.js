@@ -193,11 +193,11 @@ const POOLS = {
   newwave: { scenes: ['newwave', 'oway'], label: 'any current underground artist', years: [2022, 2023, 2024, 2025, 2026] },
   oway: { scenes: ['oway'], label: 'any ØWAY member or affiliate', years: [] },
   opium: { scenes: ['opium'], label: 'any Opium / rage-era artist', years: [2021, 2022, 2023, 2024, 2025] },
-  pluggnb: { scenes: ['pluggnb'], label: 'any plugg / pluggnb artist', years: [] },
+  pluggnb: { scenes: ['pluggnb'], label: 'any plugg / pluggnb artist', years: [2018, 2019, 2020, 2021] },
   soundcloud: { scenes: ['soundcloud'], label: 'any SoundCloud-era rapper', years: [] },
   early: { scenes: ['early', 'drain'], label: 'any early-2010s internet rap artist', years: [] },
 };
-const OLD_ERAS = new Set(['early', 'soundcloud', 'pluggnb']);
+const OLD_ERAS = new Set(['early', 'soundcloud']);
 
 // catalog: {artists:[{n, sc, al, f, p, alb:[[title,type,year]], rel:[[title,rank,albumIdx]], unr:[[title,era,status]]}]}
 // solo: artist names big enough for their own "Name a ___ song" prompts. Everyone else
@@ -320,31 +320,37 @@ export function buildCatalogQuestions(catalog, leakData, solo = []) {
 
 export function finalizeQuestions(list) { return list.map(ensureTopTiers); }
 
-// Daily 7: ~75% new underground. 5 new-wave slots (3 broad + 2 artist-specific),
-// 1 pluggnb/Opium, 1 throwback (early/SoundCloud/wildcard).
-export const DAILY_SLOTS = [
-  { eras: ['newwave'], src: ['pool', 'curated'] }, { eras: ['newwave'], src: ['solo'] }, { eras: ['pluggnb', 'opium'], src: ['pool', 'curated', 'solo'] },
-  { eras: ['newwave'], src: ['pool', 'curated'] }, { eras: ['newwave'], src: ['solo'] }, { eras: ['early', 'soundcloud', 'wildcard'], src: ['pool', 'curated', 'solo'] },
-  { eras: ['newwave'], src: ['pool', 'curated'] },
-];
+// Era mix for both modes: ~65% current (new wave/ØWAY + some Opium), 30% plug,
+// 4% SoundCloud era, 1% early 2010s. Each prompt slot draws an era by weight.
+export const ERA_WEIGHTS = [['newwave', 0.55], ['opium', 0.10], ['pluggnb', 0.30], ['soundcloud', 0.04], ['early', 0.01]];
+function drawEra(rand) {
+  let x = rand();
+  for (const [era, w] of ERA_WEIGHTS) { if ((x -= w) < 0) return era; }
+  return 'newwave';
+}
+function pickOne(questions, rand, used, usedArtists) {
+  const era = drawEra(rand);
+  const ok = q => !used.has(q.id) && !(q.artist && usedArtists.has(q.artist));
+  let pool = questions.filter(q => q.era === era && ok(q));
+  if (pool.length > 1) { // alternate broad vs artist-specific for variety
+    const wantSolo = rand() < 0.45;
+    const pref = pool.filter(q => (q.src === 'solo') === wantSolo);
+    if (pref.length) pool = pref;
+  }
+  if (!pool.length) pool = questions.filter(q => q.era === 'newwave' && ok(q));
+  if (!pool.length) pool = questions.filter(ok);
+  const q = pool[Math.floor(rand() * pool.length)];
+  used.add(q.id); if (q.artist) usedArtists.add(q.artist);
+  return q;
+}
 export function pickDaily(questions, dateStr) {
   const rand = rng(hashStr('undergrillion:' + dateStr));
-  const used = new Set(), usedArtists = new Set(), picks = [];
-  for (const slot of DAILY_SLOTS) {
-    const ok = q => !used.has(q.id) && !(q.artist && usedArtists.has(q.artist));
-    let pool = questions.filter(q => slot.eras.includes(q.era) && slot.src.includes(q.src) && ok(q));
-    if (!pool.length) pool = questions.filter(q => slot.eras.includes(q.era) && ok(q));
-    const q = shuffle(pool, rand)[0] || shuffle(questions.filter(ok), rand)[0];
-    used.add(q.id); if (q.artist) usedArtists.add(q.artist); picks.push(q);
-  }
-  return picks;
+  const used = new Set(), usedArtists = new Set();
+  return Array.from({ length: 7 }, () => pickOne(questions, rand, used, usedArtists));
 }
-// Open Mic "All": 75% new underground.
-export function openMicQueue(questions, rand, n = 200) {
-  const nw = shuffle(questions.filter(q => q.era === 'newwave'), rand), rest = shuffle(questions.filter(q => q.era !== 'newwave'), rand);
-  const out = [];
-  while (out.length < n && (nw.length || rest.length)) out.push((rand() < 0.75 && nw.length) || !rest.length ? nw.shift() : rest.shift());
-  return out;
+export function openMicQueue(questions, rand, n = 7) {
+  const used = new Set(), usedArtists = new Set();
+  return Array.from({ length: Math.min(n, questions.length) }, () => pickOne(questions, rand, used, usedArtists));
 }
 
 // "Did you mean" against the GLOBAL dictionary, so it never reveals validity.

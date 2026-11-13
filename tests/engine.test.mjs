@@ -42,7 +42,12 @@ const d1 = pickDaily(all, '2026-11-13'), d2 = pickDaily(all, '2026-11-13');
 assert.equal(d1.length, 7); assert.equal(new Set(d1.map(x => x.id)).size, 7);
 assert.deepEqual(d1.map(x => x.id), d2.map(x => x.id));
 console.log('daily:', d1.map(x => x.id).join(', '));
-for (const day of ['2026-11-13','2026-11-14','2026-11-15']) { const d = pickDaily(all, day); assert(d.filter(x => x.era === 'newwave').length >= 5, 'need 5 new-wave prompts ' + day); console.log(day, d.map(x=>x.prompt).join(' | ')); }
+const tally = {}; let n = 0;
+for (let k = 0; k < 120; k++) { const day = new Date(2026, 10, 13 + k); const d = pickDaily(all, `${day.getFullYear()}-${day.getMonth()+1}-${day.getDate()}`); for (const x of d) { tally[x.era] = (tally[x.era] || 0) + 1; n++; } }
+const pct = e => (tally[e] || 0) / n;
+console.log('era mix over 120 days:', Object.fromEntries(Object.entries(tally).map(([e, c]) => [e, (c / n * 100).toFixed(1) + '%'])));
+assert(pct('newwave') + pct('opium') > 0.58 && pct('pluggnb') > 0.22 && pct('pluggnb') < 0.38, 'era mix off');
+console.log('sample day:', pickDaily(all, '2026-11-14').map(x => x.prompt).join(' | '));
 assert.equal(venueFor(5_000_000).name, 'Rolling Loud Main Stage');
 assert.equal(showFor(700).name, 'Stadium Headliner');
 console.log('all tests passed');
