@@ -158,6 +158,7 @@ export function expandQuestions(raw) {
 const SCENE_ERA = { early: 'early', drain: 'early', soundcloud: 'soundcloud', pluggnb: 'pluggnb', opium: 'opium', newwave: 'newwave', oway: 'newwave', producer: 'wildcard' };
 const SCENE_LABEL = { early: 'an early-2010s internet rap', drain: 'a Drain Gang / Sad Boys', soundcloud: 'a SoundCloud-era', pluggnb: 'a plugg / pluggnb', opium: 'an Opium / rage-era', newwave: 'a current underground', oway: 'a ØWAY' };
 const slug = s => normalize(s) || 'x';
+const an = name => (/^[aeiou8]/i.test(name) || /^(xxx|11|18)/i.test(name) ? 'an' : 'a');
 
 // Tier from a popularity position: i = index in a list sorted most -> least popular.
 export function tierByRank(i, n, cuts = [0.04, 0.12, 0.25, 0.45]) {
@@ -189,7 +190,7 @@ export function buildCatalogQuestions(catalog, leakData) {
     if (released.length >= 10) {
       out.push({
         id: `songs-${id}`, era, kind: 't', src: 'catalog', artist: ar.n,
-        prompt: `Name a ${ar.n} song`,
+        prompt: `Name ${an(ar.n)} ${ar.n} song`,
         fact: `${ar.n} has ${released.length} released songs in our catalog${leaks.length ? ` and ${leaks.length} known unreleased ones (leaks count as Elite Ball)` : ''}. Popularity data as of ${date}.`,
         answers: [...released, ...leaks], whitelist: [],
       });
@@ -215,7 +216,7 @@ export function buildCatalogQuestions(catalog, leakData) {
       const uniqProjects = projects.filter(x => { const k = slug(x.a[0]); if (seen.has(k)) return false; seen.add(k); return true; });
       out.push({
         id: `projects-${id}`, era, kind: 't', src: 'catalog', artist: ar.n,
-        prompt: `Name a ${ar.n} album or EP`,
+        prompt: `Name ${an(ar.n)} ${ar.n} album or EP`,
         fact: `${ar.n} has ${uniqProjects.length} albums/EPs out.`,
         answers: uniqProjects.map((x, i) => ({ text: x.a[0], tier: tierByRank(i, uniqProjects.length, [0.15, 0.35, 0.55, 0.75]), aliases: [] })),
         whitelist: [],
