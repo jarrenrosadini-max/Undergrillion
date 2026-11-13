@@ -208,7 +208,7 @@ export function buildCatalogQuestions(catalog, leakData) {
       });
     }
     const projects = ar.alb.map((a, i) => ({ a, i })).filter(x => x.a[1] === 'album' || x.a[1] === 'ep');
-    if (projects.length >= 3) {
+    if (new Set(projects.map(x => slug(x.a[0]))).size >= 3) {
       const score = new Map();
       ar.rel.forEach(([, rank, ai]) => score.set(ai, Math.max(score.get(ai) || 0, rank)));
       projects.sort((x, y) => (score.get(y.i) || 0) - (score.get(x.i) || 0));

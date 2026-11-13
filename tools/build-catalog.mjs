@@ -59,6 +59,7 @@ async function findArtist(a) {
   }
   if (a.producer) return { pick: cands[0], alts: exact.slice(1, 4) };
   for (const cand of cands) if (await isRap(cand.id)) return { pick: cand, alts: exact.filter(x => x !== cand).slice(0, 3), unsure: cand !== cands[0] ? 'picked rap-tagged artist over bigger namesake' : false };
+  if (cands.length === 1) return { pick: cands[0], alts: [], unsure: 'only match, not rap-tagged' };
   return { pick: null, alts: cands, unsure: 'no rap-tagged match' };
 }
 

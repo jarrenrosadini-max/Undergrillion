@@ -1,5 +1,10 @@
 {
   "_doc": "Pin the right Deezer artist when a name collides. Find the id in tools/catalog-report.md (name#id) or the artist's deezer.com/artist/<id> URL.",
   "YVES": {"deezerId": 153813762},
-  "Pz'": {"deezerId": 325176011}
+  "Pz'": {"deezerId": 325176011},
+  "Ecco2k": {"deezerId": 6073616},
+  "Thaiboy Digital": {"deezerId": 6073614},
+  "Riovaz": {"deezerId": 69516942},
+  "2hollis": {"deezerId": 110333102},
+  "jaydes": {"deezerId": 53305692}
 }
