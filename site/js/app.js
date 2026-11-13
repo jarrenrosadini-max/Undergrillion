@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 import {
-  TIERS, TIER_ORDER, FANS_PER_PT, venueFor, showFor, matchAnswer, expandQuestions, buildCatalogQuestions,
-  buildDictionary, suggest, pickDaily, rarestAnswers, topAnswers, tierSpread, localDateStr, fmt, rng, shuffle,
+  TIERS, TIER_ORDER, FANS_PER_PT, VENUES, venueFor, showFor, matchAnswer, expandQuestions, buildCatalogQuestions, finalizeQuestions,
+  buildDictionary, dictCorrect, pickDaily, openMicQueue, rarestAnswers, topAnswers, tierSpread, localDateStr, fmt, rng, shuffle, normalize,
 } from './engine.js';
 import { sceneSVG } from './scenes.js';
 
@@ -17,7 +17,7 @@ const REACT = {
 // ---------- State ----------
 const store = load();
 function load() {
-  const base = { fans: 0, streak: 0, lastDailyDone: null, best: 0, daily: {} };
+  const base = { fans: 0, streak: 0, bestStreak: 0, lastDailyDone: null, best: 0, daily: {} };
   try {
     const v2 = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
     if (v2) return { ...base, ...v2 };
@@ -33,7 +33,7 @@ let queue = [], qi = 0, attemptsLeft = CONFIG.ATTEMPTS;
 let timer = null, deadline = 0, totalMs = 0, answering = false;
 let omCount = 0, omEra = 'all';
 const omRand = rng(Date.now());
-let shownFans = store.fans, sceneKey = null, endIdx = 0, sugIdx = -1;
+let shownFans = store.fans, sceneKey = null, endIdx = 0, pending = null;
 
 // ---------- Boot ----------
 init();
@@ -43,7 +43,7 @@ async function init() {
   try {
     const get = u => fetch(u).then(r => (r.ok ? r.json() : null)).catch(() => null);
     const [qData, lData, cData] = await Promise.all([get('data/questions.json'), get('data/leaks.json'), get('data/catalog.json')]);
-    ALL = [...expandQuestions(qData.questions), ...buildCatalogQuestions(cData, lData)];
+    ALL = finalizeQuestions([...expandQuestions(qData.questions), ...buildCatalogQuestions(cData, lData, qData.solo || [])]);
     BY_ID = new Map(ALL.map(q => [q.id, q]));
     DICT = buildDictionary(ALL, cData);
   } catch (e) {
@@ -59,10 +59,14 @@ async function init() {
 
 function bindUI() {
   $('answer-form').addEventListener('submit', e => { e.preventDefault(); submit(); });
-  $('answer').addEventListener('input', onType);
-  $('answer').addEventListener('keydown', onKeyNav);
-  $('answer').addEventListener('blur', () => setTimeout(hideSuggest, 120));
-  $('suggest').addEventListener('mousedown', e => { const li = e.target.closest('li'); if (li) { e.preventDefault(); pickSuggestion(li.textContent); } });
+  $('answer').addEventListener('input', () => { $('mic').classList.toggle('live', $('answer').value.length > 0); if (pending) clearDym(); });
+  $('dym-yes').addEventListener('click', () => confirmDym(true));
+  $('dym-no').addEventListener('click', () => confirmDym(false));
+  $('btn-streak').addEventListener('click', openStreak);
+  $('btn-fans').addEventListener('click', openFans);
+  $('end-grid').addEventListener('click', () => openModal('tiers'));
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => b.closest('.overlay').classList.add('hidden')));
+  document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.add('hidden'); }));
   $('btn-next').addEventListener('click', next);
   document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => switchMode(b.dataset.mode)));
   document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
@@ -85,28 +89,28 @@ function bindUI() {
 }
 function openHelp() { $('help').classList.remove('hidden'); }
 
-// ---------- Autocomplete ----------
-function onType() {
-  const v = $('answer').value;
-  $('mic').classList.toggle('live', v.length > 0);
-  const items = suggest(DICT, v);
-  sugIdx = -1;
-  if (!items.length || !answering) return hideSuggest();
-  $('suggest').innerHTML = items.map(t => `<li role="option">${esc(t)}</li>`).join('');
-  $('suggest').classList.remove('hidden');
+// ---------- Did you mean ----------
+function clearDym() { pending = null; $('dym').classList.add('hidden'); $('btn-submit').textContent = 'Drop it'; }
+function confirmDym(yes) {
+  if (!pending) return;
+  const { original, corrected } = pending;
+  clearDym();
+  $('answer').value = yes ? corrected : original;
+  evaluate(yes ? corrected : original, yes ? original : null);
 }
-function onKeyNav(e) {
-  const list = [...$('suggest').querySelectorAll('li')];
-  if (!list.length || $('suggest').classList.contains('hidden')) return;
-  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-    e.preventDefault();
-    sugIdx = (sugIdx + (e.key === 'ArrowDown' ? 1 : -1) + list.length) % list.length;
-    list.forEach((li, i) => li.classList.toggle('on', i === sugIdx));
-  } else if (e.key === 'Enter' && sugIdx >= 0) { e.preventDefault(); pickSuggestion(list[sugIdx].textContent); }
-  else if (e.key === 'Escape') hideSuggest();
+function openModal(id) { $(id).classList.remove('hidden'); }
+function openStreak() {
+  const days = Object.values(store.daily).filter(d => d.done).length;
+  $('streak-body').innerHTML = `<div class="stat-row"><div><b>${store.streak}</b><span>Current streak</span></div><div><b>${Math.max(store.bestStreak || 0, store.streak)}</b><span>Best streak</span></div><div><b>${days}</b><span>Daily Sets played</span></div><div><b>${store.best}</b><span>Best score</span></div></div>
+    <p>Your streak is how many days in a row you've finished the Daily Set. Miss a day and it resets to zero. A new set drops at midnight your time.</p>`;
+  openModal('streak');
 }
-function pickSuggestion(t) { $('answer').value = t; hideSuggest(); $('answer').focus(); }
-function hideSuggest() { $('suggest').classList.add('hidden'); sugIdx = -1; }
+function openFans() {
+  const v = venueFor(store.fans);
+  $('fans-body').innerHTML = `<p><b>${fmt(store.fans)} fans</b>, all-time. Every point you score brings in 10 fans (5 in Open Mic). Fans move you up to bigger venues, and the background changes to match.</p>
+    <ol class="ladder">${VENUES.map((x, i) => `<li class="${i < v.idx ? 'done' : i === v.idx ? 'now' : ''}"><span>${i <= v.idx ? (i === v.idx ? '🎤' : '✓') : '🔒'} ${x.name}</span><b>${fmt(x.fans)}</b></li>`).join('')}</ol>`;
+  openModal('fans');
+}
 
 // ---------- Modes ----------
 function switchMode(m) {
@@ -128,7 +132,7 @@ function startDaily() {
   showStage(); ask();
 }
 function startOpenMic() {
-  queue = shuffle(ALL.filter(q => omEra === 'all' || q.era === omEra), omRand);
+  queue = omEra === 'all' ? openMicQueue(ALL, omRand) : shuffle(ALL.filter(q => omEra === 'leaks' ? q.isLeak || q.era === 'leaks' : q.era === omEra), omRand);
   qi = 0; showStage(); ask();
 }
 function showStage() { $('end').classList.add('hidden'); $('stage').classList.remove('hidden'); }
@@ -146,7 +150,7 @@ function ask() {
   $('prompt').textContent = q.prompt;
   $('feedback').textContent = '';
   $('answer').value = ''; $('answer').disabled = false; $('btn-submit').disabled = false;
-  $('mic').classList.remove('live'); hideSuggest();
+  $('mic').classList.remove('live'); clearDym();
   renderAttempts(); restartTimer();
   setTimeout(() => $('answer').focus({ preventScroll: true }), 50);
 }
@@ -169,12 +173,29 @@ function stopTimer() { if (timer) cancelAnimationFrame(timer); timer = null; }
 
 function submit() {
   if (!answering) return;
+  if (pending) return confirmDym(true);           // Enter again = yes
   const val = $('answer').value.trim();
   if (!val) return;
-  hideSuggest();
+  const q = current();
+  const exact = q.answers.some(a => [a.text, ...(a.aliases || [])].some(f => normalize(f) === normalize(val)));
+  if (!exact) {
+    const fix = dictCorrect(DICT, val);
+    if (fix && normalize(fix) !== normalize(val)) {
+      pending = { original: val, corrected: fix };
+      $('answer').value = fix;
+      $('dym-text').textContent = fix;
+      $('dym').classList.remove('hidden');
+      $('btn-submit').textContent = 'Yes';
+      return;
+    }
+  }
+  evaluate(val, null);
+}
+
+function evaluate(val, typedOriginal) {
   const q = current();
   const hit = matchAnswer(val, q.answers, q.whitelist, q.kind);
-  if (hit) return resolve(hit, false, val);
+  if (hit) { if (typedOriginal) hit.corrected = true, hit.typed = typedOriginal; return resolve(hit, false, typedOriginal || val); }
   attemptsLeft--; renderAttempts();
   $('card').classList.remove('shake'); void $('card').offsetWidth; $('card').classList.add('shake');
   if (attemptsLeft <= 0) return resolve(null, false, val);
@@ -184,7 +205,7 @@ function submit() {
 
 function resolve(hit, timedOut, typed = '') {
   if (!answering) return;
-  answering = false; stopTimer(); hideSuggest();
+  answering = false; stopTimer(); clearDym();
   $('answer').disabled = true; $('btn-submit').disabled = true; $('mic').classList.remove('live');
   const q = current();
   const tierKey = hit ? hit.tier : 'wack';
@@ -260,6 +281,7 @@ function finishDaily() {
     rec.done = true;
     const y = new Date(); y.setDate(y.getDate() - 1);
     store.streak = store.lastDailyDone === localDateStr(y) ? store.streak + 1 : 1;
+    store.bestStreak = Math.max(store.bestStreak || 0, store.streak);
     store.lastDailyDone = today;
     store.best = Math.max(store.best, rec.results.reduce((s, r) => s + r.pts, 0));
     save();

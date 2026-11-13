@@ -161,100 +161,200 @@ const slug = s => normalize(s) || 'x';
 const an = name => (/^[aeiou8]/i.test(name) || /^(xxx|11|18)/i.test(name) ? 'an' : 'a');
 
 // Tier from a popularity position: i = index in a list sorted most -> least popular.
-export function tierByRank(i, n, cuts = [0.04, 0.12, 0.25, 0.45]) {
+// Default cuts spread a list across all 7 tiers so there is always an Elite Ball and a Day One.
+export const CUTS7 = [0.03, 0.10, 0.22, 0.40, 0.62, 0.86];
+export function tierByRank(i, n, cuts = CUTS7) {
   const p = n <= 1 ? 0 : i / n;
   for (let k = 0; k < cuts.length; k++) if (p < cuts[k]) return k + 1;
   return cuts.length + 1;
 }
 
+// Every prompt must have at least one Elite Ball (6) and one Day One (7).
+// Curated answer lists run roughly common -> rare, so the last answers in the
+// rarest group get promoted.
+export function ensureTopTiers(q) {
+  if (q.answers.length < 3) return q;
+  const has = t => q.answers.some(a => a.tier === t);
+  const promote = t => {
+    const pool = q.answers.filter(a => a.tier < t && a.tier !== 7);
+    if (!pool.length) return;
+    const max = Math.max(...pool.map(a => a.tier));
+    const group = pool.filter(a => a.tier === max);
+    group[group.length - 1].tier = t;
+  };
+  if (!has(7)) promote(7);
+  if (!has(6)) promote(6);
+  return q;
+}
+
+const NEW_SCENES = ['newwave', 'oway'];
+const POOL_LABEL = { newwave: 'a current underground artist', pluggnb: 'a plugg / pluggnb artist', opium: 'an Opium / rage-era artist', soundcloud: 'a SoundCloud-era rapper' };
+const POOL_YEARS = { newwave: [2022, 2023, 2024, 2025, 2026], pluggnb: [2018, 2019, 2020, 2021], opium: [2021, 2022, 2023, 2024, 2025], soundcloud: [2016, 2017, 2018] };
+
 // catalog: {artists:[{n, sc, al, f, p, alb:[[title,type,year]], rel:[[title,rank,albumIdx]], unr:[[title,era,status]]}]}
-// leakData: curated leaks.json, used to add play counts / grail flags.
-export function buildCatalogQuestions(catalog, leakData) {
+// solo: artist names big enough for their own "Name a ___ song" prompts. Everyone else
+// only appears as an answer inside broader prompts.
+export function buildCatalogQuestions(catalog, leakData, solo = []) {
   if (!catalog) return [];
   const out = [];
+  const soloSet = new Set(solo.map(slug));
   const leakIdx = new Map();
   for (const l of leakData?.leaks || []) leakIdx.set(slug(l.a) + '|' + slug(l.t), l);
   const date = catalog.generated;
+  const artists = catalog.artists.filter(a => !a.p);
 
-  for (const ar of catalog.artists) {
-    if (ar.p) continue;
-    const era = SCENE_ERA[ar.sc] || 'wildcard';
+  // ---- Solo prompts (bigger artists only) ----
+  for (const ar of artists) {
     const id = slug(ar.n);
+    if (!soloSet.has(id)) continue;
+    const era = SCENE_ERA[ar.sc] || 'wildcard';
     const unr = ar.unr.map(([t, e, s]) => ({ t, e, s }));
     for (const l of leakData?.leaks || []) if (slug(l.a) === id && !unr.some(u => slug(u.t) === slug(l.t)) && !ar.rel.some(r => slug(r[0]) === slug(l.t))) unr.push({ t: l.t, e: l.e, s: l.s, al: l.al });
     const isGrail = u => { const c = leakIdx.get(id + '|' + slug(u.t)); return u.s === 'grail' || u.s === 'bestof' || c?.s === 'grail' || c?.s === 'bestof'; };
-
-    const released = ar.rel.map(([t], i) => ({ text: t, tier: tierByRank(i, ar.rel.length), aliases: [] }));
+    const released = ar.rel.map(([t], i) => ({ text: t, tier: tierByRank(i, ar.rel.length, [0.04, 0.12, 0.25, 0.45, 0.7, 0.9]), aliases: [] }));
     const leaks = unr.map(u => ({ text: u.t, tier: isGrail(u) ? 7 : 6, aliases: u.al || leakIdx.get(id + '|' + slug(u.t))?.al || [] }));
-
-    if (released.length >= 10) {
+    if (released.length >= 10) out.push({
+      id: `songs-${id}`, era, kind: 't', src: 'solo', artist: ar.n,
+      prompt: `Name ${an(ar.n)} ${ar.n} song`,
+      fact: `${ar.n} has ${released.length} released songs in our catalog${leaks.length ? ` and ${leaks.length} known leaks (leaks score Elite Ball or Day One)` : ''}. Popularity as of ${date}.`,
+      answers: [...released, ...leaks], whitelist: [],
+    });
+    if (leaks.length >= 25) {
+      const ranked = leaks.map(l => ({ ...l, plays: leakIdx.get(id + '|' + slug(l.text))?.p || 0 }));
+      const known = ranked.filter(l => l.plays).sort((a, b) => b.plays - a.plays);
+      const rk = new Map(known.map((l, i) => [l.text, i]));
       out.push({
-        id: `songs-${id}`, era, kind: 't', src: 'catalog', artist: ar.n,
-        prompt: `Name ${an(ar.n)} ${ar.n} song`,
-        fact: `${ar.n} has ${released.length} released songs in our catalog${leaks.length ? ` and ${leaks.length} known unreleased ones (leaks count as Elite Ball)` : ''}. Popularity data as of ${date}.`,
-        answers: [...released, ...leaks], whitelist: [],
-      });
-    }
-    if (leaks.length >= 12) {
-      const known = leaks.map(l => ({ ...l, plays: leakIdx.get(id + '|' + slug(l.text))?.p || 0 }));
-      const ranked = known.filter(l => l.plays).sort((a, b) => b.plays - a.plays);
-      const rk = new Map(ranked.map((l, i) => [l.text, i]));
-      out.push({
-        id: `leaks-${id}`, era: 'leaks', kind: 't', src: 'catalog', artist: ar.n, isLeak: true,
-        prompt: `Name an unreleased ${ar.n} song (any leak counts)`,
-        fact: `Fans have catalogued ${leaks.length}+ unreleased ${ar.n} songs. Grails, the most-wanted leaks, score Day One. Snapshot ${date}.`,
-        answers: known.map(l => ({ text: l.text, aliases: l.aliases, tier: l.tier === 7 ? 7 : rk.has(l.text) ? (rk.get(l.text) < 3 ? 3 : 4) : 5 })),
+        id: `leaks-${id}`, era, kind: 't', src: 'solo', artist: ar.n, isLeak: true,
+        prompt: `Name any unreleased ${ar.n} song`,
+        fact: `Fans have catalogued ${leaks.length}+ unreleased ${ar.n} songs. Grails (the most-wanted leaks) are Day One. Snapshot ${date}.`,
+        answers: ranked.map(l => ({ text: l.text, aliases: l.aliases, tier: l.tier === 7 ? 7 : rk.has(l.text) ? (rk.get(l.text) < 3 ? 3 : 4) : 6 })),
         whitelist: [],
       });
     }
-    const projects = ar.alb.map((a, i) => ({ a, i })).filter(x => x.a[1] === 'album' || x.a[1] === 'ep');
-    if (new Set(projects.map(x => slug(x.a[0]))).size >= 3) {
-      const score = new Map();
-      ar.rel.forEach(([, rank, ai]) => score.set(ai, Math.max(score.get(ai) || 0, rank)));
-      projects.sort((x, y) => (score.get(y.i) || 0) - (score.get(x.i) || 0));
-      const seen = new Set();
-      const uniqProjects = projects.filter(x => { const k = slug(x.a[0]); if (seen.has(k)) return false; seen.add(k); return true; });
-      out.push({
-        id: `projects-${id}`, era, kind: 't', src: 'catalog', artist: ar.n,
-        prompt: `Name ${an(ar.n)} ${ar.n} album or EP`,
-        fact: `${ar.n} has ${uniqProjects.length} albums/EPs out.`,
-        answers: uniqProjects.map((x, i) => ({ text: x.a[0], tier: tierByRank(i, uniqProjects.length, [0.15, 0.35, 0.55, 0.75]), aliases: [] })),
-        whitelist: [],
-      });
-    }
-  }
-
-  const byScene = {};
-  for (const ar of catalog.artists) if (!ar.p) (byScene[ar.sc] ||= []).push(ar);
-  for (const [sc, list] of Object.entries(byScene)) {
-    if (list.length < 5 || !SCENE_LABEL[sc]) continue;
-    list.sort((a, b) => b.f - a.f);
-    out.push({
-      id: `scene-${sc}`, era: SCENE_ERA[sc], kind: 'n', src: 'catalog',
-      prompt: `Name ${SCENE_LABEL[sc]} artist`,
-      fact: `Rarity here follows each artist's fan count. The biggest name in this pool is ${list[0].n}.`,
-      answers: list.map((ar, i) => ({ text: ar.n, aliases: ar.al, tier: tierByRank(i, list.length, [0.1, 0.25, 0.45, 0.65, 0.85]) })),
+    const projects = [];
+    const seen = new Set();
+    const score = new Map();
+    ar.rel.forEach(([, rank, ai]) => score.set(ai, Math.max(score.get(ai) || 0, rank)));
+    ar.alb.map((a, i) => ({ a, i })).filter(x => x.a[1] === 'album' || x.a[1] === 'ep')
+      .sort((x, y) => (score.get(y.i) || 0) - (score.get(x.i) || 0))
+      .forEach(x => { const k = slug(x.a[0]); if (!seen.has(k)) { seen.add(k); projects.push(x); } });
+    if (projects.length >= 4) out.push({
+      id: `projects-${id}`, era, kind: 't', src: 'solo', artist: ar.n,
+      prompt: `Name ${an(ar.n)} ${ar.n} album or EP`,
+      fact: `${ar.n} has ${projects.length} albums/EPs out.`,
+      answers: projects.map((x, i) => ({ text: x.a[0], tier: tierByRank(i, projects.length), aliases: [] })),
       whitelist: [],
     });
+  }
+
+  // ---- Broad pools: everyone counts here ----
+  for (const [sc, years] of Object.entries(POOL_YEARS)) {
+    const scenes = sc === 'newwave' ? NEW_SCENES : [sc];
+    const pool = artists.filter(a => scenes.includes(a.sc));
+    if (pool.length < 4) continue;
+    const era = SCENE_ERA[sc];
+    // Artist pool (all years), tiered by fan count
+    const byFans = pool.slice().sort((a, b) => b.f - a.f);
+    out.push({
+      id: `pool-artists-${sc}`, era, kind: 'n', src: 'pool',
+      prompt: `Name ${POOL_LABEL[sc]}`,
+      fact: `Rarity follows each artist's fan count. The biggest name here is ${byFans[0].n}.`,
+      answers: byFans.map((a, i) => ({ text: a.n, aliases: a.al, tier: tierByRank(i, byFans.length) })),
+      whitelist: [],
+    });
+    for (const y of years) {
+      const ys = String(y);
+      // songs from that year (title -> best rank, artist)
+      const songs = new Map();
+      const projects = new Map();
+      const who = new Map();
+      for (const a of pool) {
+        a.rel.forEach(([t, rank, ai]) => {
+          const al = a.alb[ai]; if (!al || al[2] !== ys) return;
+          const k = slug(t); const prev = songs.get(k);
+          if (!prev || rank > prev.rank) songs.set(k, { t, rank, by: a.n });
+        });
+        const sc2 = new Map();
+        a.rel.forEach(([, rank, ai]) => sc2.set(ai, Math.max(sc2.get(ai) || 0, rank)));
+        a.alb.forEach((al, ai) => {
+          if (al[2] !== ys || !(al[1] === 'album' || al[1] === 'ep')) return;
+          const k = slug(al[0]); const r = sc2.get(ai) || 0; const prev = projects.get(k);
+          if (!prev || r > prev.rank) projects.set(k, { t: al[0], rank: r, by: a.n });
+          who.set(a.n, a);
+        });
+      }
+      const songList = [...songs.values()].sort((a, b) => b.rank - a.rank);
+      if (songList.length >= 40) out.push({
+        id: `pool-songs-${sc}-${ys}`, era, kind: 't', src: 'pool', year: y,
+        prompt: `Name a song released in ${ys} by ${POOL_LABEL[sc]}`,
+        fact: `${songList.length} songs qualify. The biggest: "${songList[0].t}" by ${songList[0].by}.`,
+        answers: songList.map((s, i) => ({ text: s.t, tier: tierByRank(i, songList.length), aliases: [], by: s.by })),
+        whitelist: [],
+      });
+      const projList = [...projects.values()].sort((a, b) => b.rank - a.rank);
+      if (projList.length >= 10) out.push({
+        id: `pool-projects-${sc}-${ys}`, era, kind: 't', src: 'pool', year: y,
+        prompt: `Name an album or EP that dropped in ${ys} by ${POOL_LABEL[sc]}`,
+        fact: `${projList.length} projects qualify. The biggest: ${projList[0].t} by ${projList[0].by}.`,
+        answers: projList.map((s, i) => ({ text: s.t, tier: tierByRank(i, projList.length), aliases: [], by: s.by })),
+        whitelist: [],
+      });
+      const whoList = [...who.values()].sort((a, b) => b.f - a.f);
+      if (whoList.length >= 8) out.push({
+        id: `pool-who-${sc}-${ys}`, era, kind: 'n', src: 'pool', year: y,
+        prompt: `Name ${POOL_LABEL[sc]} who dropped an album or EP in ${ys}`,
+        fact: `${whoList.length} artists qualify.`,
+        answers: whoList.map((a, i) => ({ text: a.n, aliases: a.al, tier: tierByRank(i, whoList.length) })),
+        whitelist: [],
+      });
+    }
   }
   return out;
 }
 
-// Daily 7: 2 pluggnb, 2 newwave, 1 opium, 1 early|soundcloud, 1 leaks|wildcard.
-// Alternates curated and catalog prompts so a day isn't all "name a song".
-export const DAILY_SLOTS = [['pluggnb'], ['newwave'], ['opium'], ['early', 'soundcloud'], ['pluggnb'], ['newwave'], ['leaks', 'wildcard']];
+export function finalizeQuestions(list) { return list.map(ensureTopTiers); }
+
+// Daily 7: ~75% new underground. 5 new-wave slots (3 broad + 2 artist-specific),
+// 1 pluggnb/Opium, 1 throwback (early/SoundCloud/wildcard).
+export const DAILY_SLOTS = [
+  { eras: ['newwave'], src: ['pool', 'curated'] }, { eras: ['newwave'], src: ['solo'] }, { eras: ['pluggnb', 'opium'], src: ['pool', 'curated', 'solo'] },
+  { eras: ['newwave'], src: ['pool', 'curated'] }, { eras: ['newwave'], src: ['solo'] }, { eras: ['early', 'soundcloud', 'wildcard'], src: ['pool', 'curated', 'solo'] },
+  { eras: ['newwave'], src: ['pool', 'curated'] },
+];
 export function pickDaily(questions, dateStr) {
   const rand = rng(hashStr('undergrillion:' + dateStr));
   const used = new Set(), usedArtists = new Set(), picks = [];
-  DAILY_SLOTS.forEach((eras, si) => {
-    const wantCurated = si % 2 === 0;
-    let pool = questions.filter(q => eras.includes(q.era) && !used.has(q.id) && !(q.artist && usedArtists.has(q.artist)));
-    const pref = pool.filter(q => (q.src === 'curated') === wantCurated);
-    if (pref.length) pool = pref;
-    const q = shuffle(pool, rand)[0] || shuffle(questions.filter(x => !used.has(x.id)), rand)[0];
+  for (const slot of DAILY_SLOTS) {
+    const ok = q => !used.has(q.id) && !(q.artist && usedArtists.has(q.artist));
+    let pool = questions.filter(q => slot.eras.includes(q.era) && slot.src.includes(q.src) && ok(q));
+    if (!pool.length) pool = questions.filter(q => slot.eras.includes(q.era) && ok(q));
+    const q = shuffle(pool, rand)[0] || shuffle(questions.filter(ok), rand)[0];
     used.add(q.id); if (q.artist) usedArtists.add(q.artist); picks.push(q);
-  });
+  }
   return picks;
+}
+// Open Mic "All": 75% new underground.
+export function openMicQueue(questions, rand, n = 200) {
+  const nw = shuffle(questions.filter(q => q.era === 'newwave'), rand), rest = shuffle(questions.filter(q => q.era !== 'newwave'), rand);
+  const out = [];
+  while (out.length < n && (nw.length || rest.length)) out.push((rand() < 0.75 && nw.length) || !rest.length ? nw.shift() : rest.shift());
+  return out;
+}
+
+// "Did you mean" against the GLOBAL dictionary, so it never reveals validity.
+export function dictCorrect(dict, input) {
+  const q = normalize(input);
+  if (!q || dict.some(e => e.n === q)) return null;
+  const qw = words(input);
+  let best = null;
+  const consider = (e, score) => { if (!best || score < best.score || (score === best.score && (e.p > best.e.p || (e.p === best.e.p && e.t.length < best.e.t.length)))) best = { e, score }; };
+  for (const e of dict) {
+    const d = lev(q, e.n);
+    if (d <= allowedEdits(e.n.length) && d <= Math.ceil(e.n.length * 0.25)) consider(e, d);
+    else if (q.length >= 4 && e.n.startsWith(q) && q.length >= e.n.length * 0.55) consider(e, 3);
+    if (e.p >= 1 && q.length >= 3 && qw.length === 1 && e.w.includes(qw[0])) consider(e, e.p === 2 ? 0.5 : 1.5);
+  }
+  return best ? best.e.t : null;
 }
 
 export function rarestAnswers(q, n = 3) { return q.answers.slice().sort((a, b) => b.tier - a.tier).slice(0, n); }

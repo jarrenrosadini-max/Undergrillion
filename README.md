@@ -6,14 +6,14 @@ A daily rare-answer trivia game for underground rap heads, from 2010 cloud rap t
 
 ## How it works
 - **Daily Set:** 7 prompts, 25 s each, the same for everyone that day. **Open Mic:** endless practice at half the fans, with era filters.
-- Type any correct answer (autocomplete helps; close spellings and short forms like "carti" auto-correct when they clearly match one answer). Rarity sets the score: Mainstream 5 · Common Ball 10 · Rare 25 · Niche 40 · Tapped In 60 · Elite Ball 80 · Day One 100. 3 tries per prompt.
+- Type any correct answer and press Enter. If it's close to a known name, the game asks "Did you mean → ___?" ("carti" → Playboi Carti). Every prompt has at least one Elite Ball and one Day One answer, and the Daily Set is about 75% new underground. Rarity sets the score: Mainstream 5 · Common Ball 10 · Rare 25 · Niche 40 · Tapped In 60 · Elite Ball 80 · Day One 100. 3 tries per prompt.
 - Points become fans (1 pt = 10 fans). The background is your current venue (11 of them, bedroom to stadium) and it reacts to every answer: rarer = faster, harder.
 
 ## Project layout
 | Path | What it is |
 |---|---|
 | `site/` | The whole game (static HTML/CSS/JS, no build step). This folder is what gets published. |
-| `site/data/questions.json` | Hand-curated prompts. Format: `{"id","era","p":prompt,"f":fact,"a":[[answer, tier, [aliases]]]}`. Eras: `early`, `soundcloud`, `pluggnb`, `opium`, `newwave`, `wildcard`. |
+| `site/data/questions.json` | Hand-curated prompts, plus the `solo` list: the only artists who get their own "Name a ___ song" prompts (everyone else appears inside broader ones, many tied to a year). Format: `{"id","era","p":prompt,"f":fact,"a":[[answer, tier, [aliases]]]}`. Eras: `early`, `soundcloud`, `pluggnb`, `opium`, `newwave`, `wildcard`. |
 | `site/data/catalog.json` | **Generated.** Every roster artist's released discography (with popularity) + unreleased songs. Prompts like "Name a Che song" are built from it. |
 | `site/data/leaks.json` | Hand-picked leak facts (plays, grails) merged into the catalog. |
 | `tools/roster.json` | The artist list: scene, aliases, tracker sheet, archive accounts. Add an artist here and push. |

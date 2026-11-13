@@ -3301,7 +3301,7 @@
 },
 {
 "id": "archives",
-"era": "leaks",
+"era": "wildcard",
 "k": "n",
 "p": "Name a fan 'archive' account that uploads leaks to streaming services",
 "f": "Burner accounts such as fakemink archive pull hundreds of thousands of monthly listeners by uploading leaks and deleted songs.",
@@ -3357,5 +3357,43 @@
 ]
 ]
 }
-]
+],
+"solo": [
+"OsamaSon",
+"Nettspend",
+"Che",
+"Glokk40Spaz",
+"Xaviersobased",
+"Prettifun",
+"fakemink",
+"2hollis",
+"Nine Vicious",
+"LAZER DIM 700",
+"Lucy Bedroque",
+"2slimey",
+"slayr",
+"jaydes",
+"Ken Carson",
+"Destroy Lonely",
+"Homixide Gang",
+"Yeat",
+"Summrs",
+"Autumn!",
+"SoFaygo",
+"Lil Tecca",
+"KA$HDAMI",
+"Playboi Carti",
+"Lil Uzi Vert",
+"Juice WRLD",
+"XXXTentacion",
+"Lil Peep",
+"Trippie Redd",
+"Ski Mask The Slump God",
+"Lil Yachty",
+"Chief Keef",
+"Yung Lean",
+"Bladee",
+"Denzel Curry"
+],
+"_soloDoc": "Artists big enough for their own 'Name a ___ song' prompts. Everyone else in tools/roster.json only shows up inside broader prompts."
 }

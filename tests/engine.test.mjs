@@ -1,20 +1,21 @@
 import { readFileSync, existsSync } from 'node:fs';
 import assert from 'node:assert/strict';
-import { matchAnswer, expandQuestions, buildCatalogQuestions, buildDictionary, suggest, pickDaily, normalize, venueFor, showFor, TIERS } from '../site/js/engine.js';
+import { matchAnswer, expandQuestions, buildCatalogQuestions, finalizeQuestions, buildDictionary, dictCorrect, pickDaily, normalize, venueFor, showFor, TIERS } from '../site/js/engine.js';
 
 const read = p => JSON.parse(readFileSync(new URL('../site/data/' + p, import.meta.url)));
 const q = read('questions.json'), l = read('leaks.json');
 const catPath = new URL('../site/data/catalog.json', import.meta.url);
 const cat = existsSync(catPath) ? JSON.parse(readFileSync(catPath)) : null;
 const curated = expandQuestions(q.questions);
-const gen = buildCatalogQuestions(cat, l);
-const all = [...curated, ...gen];
+const gen = buildCatalogQuestions(cat, l, q.solo || []);
+const all = finalizeQuestions([...curated, ...gen]);
 
 const ids = new Set();
 for (const x of all) {
   assert(!ids.has(x.id), 'dup id ' + x.id); ids.add(x.id);
   assert(x.answers.length >= 3, 'too few answers ' + x.id);
   for (const a of x.answers) assert(TIERS[a.tier], `bad tier ${x.id} ${a.text} ${a.tier}`);
+  assert(x.answers.some(a => a.tier === 7) && x.answers.some(a => a.tier === 6), 'missing Day One/Elite Ball ' + x.id);
 }
 const byEra = all.reduce((m, x) => (m[x.era] = (m[x.era] || 0) + 1, m), {});
 console.log('curated:', curated.length, 'catalog prompts:', gen.length, 'total:', all.length, byEra);
@@ -24,6 +25,7 @@ const find = id => all.find(x => x.id === id);
 const m = (id, s) => { const x = find(id); return matchAnswer(s, x.answers, x.whitelist, x.kind); };
 // exact + aliases
 assert.equal(m('kashdami', 'reparations')?.tier, 1);
+if (cat) { const solo = new Set((q.solo||[]).map(normalize)); for (const x of gen) if (x.artist) assert(solo.has(normalize(x.artist)), 'non-solo artist prompt ' + x.id); }
 assert.equal(m('pluggnb-artists', 'KASHDAMI')?.answer.text, 'Ka$hdami');
 assert.equal(m('pluggnb-artists', 'autumn')?.answer.text, 'Autumn!');
 assert.equal(m('opium-artists', 'HXG')?.answer.text, 'Homixide Gang');
@@ -40,12 +42,15 @@ assert.equal(m('summrs-proj', 'bellworld')?.answer.text, '##Bellworld');
 assert.equal(m('lonely-proj', '</3')?.answer.text, '</3');
 // autocomplete is global, not per-question
 const dict = buildDictionary(all, cat);
-assert(suggest(dict, 'play').some(s => /Playboi Carti/.test(s)));
+assert.equal(dictCorrect(dict, 'carti'), 'Playboi Carti');
+assert.equal(dictCorrect(dict, 'osamasn'), 'OsamaSon');
+assert.equal(dictCorrect(dict, 'OsamaSon'), null); // already a known name: no prompt
 
 const d1 = pickDaily(all, '2026-11-13'), d2 = pickDaily(all, '2026-11-13');
 assert.equal(d1.length, 7); assert.equal(new Set(d1.map(x => x.id)).size, 7);
 assert.deepEqual(d1.map(x => x.id), d2.map(x => x.id));
 console.log('daily:', d1.map(x => x.id).join(', '));
+for (const day of ['2026-11-13','2026-11-14','2026-11-15']) { const d = pickDaily(all, day); assert(d.filter(x => x.era === 'newwave').length >= 5, 'need 5 new-wave prompts ' + day); console.log(day, d.map(x=>x.prompt).join(' | ')); }
 assert.equal(venueFor(5_000_000).name, 'Rolling Loud Main Stage');
 assert.equal(showFor(700).name, 'Stadium Headliner');
 console.log('all tests passed');
