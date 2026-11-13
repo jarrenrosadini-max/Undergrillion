@@ -1,0 +1,1509 @@
+{
+ "snapshotDate": "2026-11-12",
+ "note": "Titles, eras and status only. Plays = plays on unreleased.world, not SoundCloud. Never add links or audio.",
+ "leaks": [
+  {
+   "a": "OsamaSon",
+   "t": "Make Sum Noise",
+   "e": "Jump Out",
+   "p": 416
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Kills 2",
+   "e": null,
+   "p": 466
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Cocaine",
+   "e": "Flex Musix",
+   "p": 213
+  },
+  {
+   "a": "OsamaSon",
+   "t": "withdrawals [V1]",
+   "e": "Jump Out",
+   "p": 172,
+   "al": [
+    "withdrawals v1"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Ims0excited!",
+   "e": "psykotic",
+   "p": 164,
+   "al": [
+    "im so excited"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Or What",
+   "e": "Flex Musix",
+   "p": 143
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Roster",
+   "e": "Flex Musix",
+   "p": 134
+  },
+  {
+   "a": "OsamaSon",
+   "t": "P!NK CUP$",
+   "e": "Nocturnal",
+   "p": 97,
+   "al": [
+    "pink cups"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Guapathon",
+   "e": "psykotic",
+   "p": 94
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Vamp",
+   "e": "Osama Season",
+   "p": 84
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Sped Klass",
+   "e": "psykotic",
+   "s": "grail",
+   "al": [
+    "sped class"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Chrome Hearts House",
+   "e": null,
+   "s": "bestof"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Killdabih",
+   "e": null,
+   "s": "bestof",
+   "al": [
+    "kill da bih"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Clean Up Squad",
+   "e": "Jump Out",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Pay Me",
+   "e": "Jump Out",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Smash On Em",
+   "e": "Jump Out",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Thanking God",
+   "e": "Jump Out",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Shut Up",
+   "e": "Jump Out",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "You don't gotta lie",
+   "e": "Jump Out",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Bodies Drop",
+   "e": "psykotic",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Celine",
+   "e": "psykotic",
+   "s": "grail"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Do me wrong",
+   "e": "Vengeance"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "RR Remix",
+   "e": "Carnival"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Jugg Musik",
+   "e": "2022"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "No Auto 3000",
+   "e": "2022"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Modulvampir",
+   "e": "2022"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Sag",
+   "e": "2022"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Space",
+   "e": "2022"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "50 Hoe$",
+   "e": "Osama Season",
+   "al": [
+    "50 hoes"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Misfit",
+   "e": "Nocturnal"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Ion Gaf",
+   "e": "Nocturnal"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Homebodies",
+   "e": "Nocturnal"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "Im Leanin",
+   "e": "Nocturnal"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "F#ck Ya Buddy!",
+   "e": "Nocturnal",
+   "al": [
+    "fuck ya buddy"
+   ]
+  },
+  {
+   "a": "OsamaSon",
+   "t": "TB",
+   "e": "Osama Season"
+  },
+  {
+   "a": "OsamaSon",
+   "t": "mummy",
+   "e": null
+  },
+  {
+   "a": "OsamaSon",
+   "t": "in dis bitch",
+   "e": null
+  },
+  {
+   "a": "OsamaSon",
+   "t": "stiggy",
+   "e": null
+  },
+  {
+   "a": "OsamaSon",
+   "t": "traffix",
+   "e": null
+  },
+  {
+   "a": "OsamaSon",
+   "t": "batman coupe",
+   "e": null
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "The Date",
+   "e": "No Stylist",
+   "p": 2074
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Show Stopper",
+   "e": "If Looks Could Kill",
+   "p": 1348
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Vamped",
+   "e": "If Looks Could Kill",
+   "p": 727
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Drug Party",
+   "e": "</3³",
+   "p": 699
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Sipped Too Much",
+   "e": "Drop Dead Gorgeous",
+   "p": 593
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "I'M STUNTING",
+   "e": "Love Lasts Forever",
+   "p": 572,
+   "al": [
+    "im stunting"
+   ]
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "NO CONTROL",
+   "e": "Love Lasts Forever",
+   "p": 552
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Freeze To Death",
+   "e": "If Looks Could Kill",
+   "p": 453
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Piercings & Tats",
+   "e": "</3³",
+   "p": 373,
+   "al": [
+    "piercings and tats"
+   ]
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Judas",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Chanel Her Throat",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Tell It",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "PLAYA",
+   "e": "Love Lasts Forever",
+   "s": "grail"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "ALL LV",
+   "e": "Love Lasts Forever",
+   "s": "grail"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "I MISS YOU",
+   "e": "Love Lasts Forever",
+   "s": "grail"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "How Would You Know?",
+   "e": "Drop Dead Gorgeous"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Prototype",
+   "e": "Drop Dead Gorgeous"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Through My Mind",
+   "e": "Drop Dead Gorgeous"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "WHITE POWDER",
+   "e": "Love Lasts Forever"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Thru A Text",
+   "e": "</3³"
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "suicide mission",
+   "e": null
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "you and I",
+   "e": null
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "hldmyhnd.wav",
+   "e": null,
+   "al": [
+    "hold my hand"
+   ]
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Exodus",
+   "e": null
+  },
+  {
+   "a": "Destroy Lonely",
+   "t": "Shoulda Listened",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Can't Feel My Legs",
+   "e": "More Chaos",
+   "p": 209
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Play Wit Her Nose",
+   "e": "More Chaos",
+   "p": 198
+  },
+  {
+   "a": "Ken Carson",
+   "t": "rollin",
+   "e": "Cartunez",
+   "p": 193
+  },
+  {
+   "a": "Ken Carson",
+   "t": "00taskforce",
+   "e": "xperiment",
+   "p": 114,
+   "s": "grail"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Balenciaga",
+   "e": "A Great Chaos",
+   "p": 90
+  },
+  {
+   "a": "Ken Carson",
+   "t": "9/5",
+   "e": "xperiment",
+   "p": 85
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Diamonds",
+   "e": "More Chaos",
+   "p": 80
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Subzero",
+   "e": "xperiment",
+   "p": 73
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Psych!n",
+   "e": "xperiment",
+   "p": 72,
+   "al": [
+    "psychin"
+   ]
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Maaly Raw",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Die Lit",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Me Vs. Me",
+   "e": null,
+   "s": "grail",
+   "al": [
+    "me vs me"
+   ]
+  },
+  {
+   "a": "Ken Carson",
+   "t": "X For Breakfast",
+   "e": "X",
+   "al": [
+    "x 4 breakfast"
+   ]
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Aquafina",
+   "e": "X"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Lil Vamp",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Otto Rocket",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Pussy Pink",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Teenager Rager",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Customer",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Clutch",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Midnight Massacre",
+   "e": null
+  },
+  {
+   "a": "Ken Carson",
+   "t": "pull up",
+   "e": "X"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Sushi",
+   "e": "xperiment"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Flame",
+   "e": "Cartunez"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Pop My Shit",
+   "e": "Cartunez"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "I'm Loaded",
+   "e": "xperiment"
+  },
+  {
+   "a": "Ken Carson",
+   "t": "Spin Again",
+   "e": "xperiment"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Bored",
+   "e": "BAD ASS F*CKING KID",
+   "p": 89,
+   "s": "bestof"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Im Grade A",
+   "e": "BAD ASS F*CKING KID",
+   "p": 67
+  },
+  {
+   "a": "Nettspend",
+   "t": "Canada",
+   "e": "SLUT",
+   "p": 54
+  },
+  {
+   "a": "Nettspend",
+   "t": "Figure Out",
+   "e": "SLUT",
+   "p": 50
+  },
+  {
+   "a": "Nettspend",
+   "t": "Get Guap",
+   "e": "SLUT",
+   "p": 47
+  },
+  {
+   "a": "Nettspend",
+   "t": "Blicks On The Bus",
+   "e": "Early Life Crisis",
+   "p": 38
+  },
+  {
+   "a": "Nettspend",
+   "t": "Free Smoke",
+   "e": "SLUT",
+   "p": 35
+  },
+  {
+   "a": "Nettspend",
+   "t": "Pay Your Bills",
+   "e": "SLUT",
+   "p": 30
+  },
+  {
+   "a": "Nettspend",
+   "t": "Round Town",
+   "e": "BAD ASS F*CKING KID",
+   "p": 30
+  },
+  {
+   "a": "Nettspend",
+   "t": "On The Phone",
+   "e": "BAD ASS F*CKING KID",
+   "s": "bestof"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Fuck Prom",
+   "e": "BAD ASS F*CKING KID",
+   "s": "grail"
+  },
+  {
+   "a": "Nettspend",
+   "t": "IG Thot",
+   "e": "BAD ASS F*CKING KID",
+   "s": "grail"
+  },
+  {
+   "a": "Nettspend",
+   "t": "High Without Uuu",
+   "e": "BAD ASS F*CKING KID",
+   "s": "bestof"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Town",
+   "e": "BAD ASS F*CKING KID"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Lets Dance",
+   "e": "SLUT"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Cigarettes",
+   "e": "BAD ASS F*CKING KID"
+  },
+  {
+   "a": "Nettspend",
+   "t": "Chaching",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "Pour Up",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "Just A Teen",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "Wokstar",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "Heavens Bed",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "Playground",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "Skrong",
+   "e": null
+  },
+  {
+   "a": "Nettspend",
+   "t": "12 Friends",
+   "e": null
+  },
+  {
+   "a": "Che",
+   "t": "Koupe",
+   "e": "Crueger",
+   "p": 85
+  },
+  {
+   "a": "Che",
+   "t": "IM SO GEEKED",
+   "e": null,
+   "p": 71
+  },
+  {
+   "a": "Che",
+   "t": "666",
+   "e": "closed captions",
+   "p": 52
+  },
+  {
+   "a": "Che",
+   "t": "Okay Bitch",
+   "e": "Sayso Says",
+   "p": 39
+  },
+  {
+   "a": "Che",
+   "t": "What's On Your Mind?",
+   "e": "Sayso Says",
+   "p": 38
+  },
+  {
+   "a": "Che",
+   "t": "Change",
+   "e": "Rest In Bass",
+   "p": 35
+  },
+  {
+   "a": "Che",
+   "t": "For Nothing",
+   "e": "Rest In Bass",
+   "p": 35
+  },
+  {
+   "a": "Che",
+   "t": "BASS KILLER",
+   "e": "Rest In Bass",
+   "p": 29
+  },
+  {
+   "a": "Che",
+   "t": "Faygo",
+   "e": "Crueger",
+   "p": 29
+  },
+  {
+   "a": "Che",
+   "t": "I Need That",
+   "e": "Sayso Says"
+  },
+  {
+   "a": "Che",
+   "t": "M30",
+   "e": "Crueger"
+  },
+  {
+   "a": "Che",
+   "t": "Hater Blockerz",
+   "e": "Sayso Says"
+  },
+  {
+   "a": "Che",
+   "t": "Birthday",
+   "e": "Sayso Says"
+  },
+  {
+   "a": "Che",
+   "t": "Cannibal",
+   "e": null
+  },
+  {
+   "a": "Che",
+   "t": "Matches",
+   "e": null
+  },
+  {
+   "a": "Che",
+   "t": "GØURMET",
+   "e": null,
+   "al": [
+    "gourmet"
+   ]
+  },
+  {
+   "a": "Yeat",
+   "t": "Chose me",
+   "e": "Lyfëstyle",
+   "p": 107
+  },
+  {
+   "a": "Yeat",
+   "t": "Terrified",
+   "e": "Lyfëstyle",
+   "p": 97
+  },
+  {
+   "a": "Yeat",
+   "t": "crash out",
+   "e": "A Dangerous Lyfe",
+   "p": 90
+  },
+  {
+   "a": "Yeat",
+   "t": "Are you serious",
+   "e": "Lyfëstyle",
+   "p": 85
+  },
+  {
+   "a": "Yeat",
+   "t": "Crashed dat bitch",
+   "e": "Super geëky",
+   "p": 82
+  },
+  {
+   "a": "Yeat",
+   "t": "Cant trust me",
+   "e": "2093",
+   "p": 79
+  },
+  {
+   "a": "Yeat",
+   "t": "Makë No Sense",
+   "e": "2 Alivë",
+   "p": 77,
+   "al": [
+    "make no sense"
+   ]
+  },
+  {
+   "a": "Yeat",
+   "t": "Now",
+   "e": "Lyfëstyle",
+   "p": 76
+  },
+  {
+   "a": "Yeat",
+   "t": "Curtains",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Yeat",
+   "t": "go b4",
+   "e": null,
+   "s": "grail",
+   "al": [
+    "go before"
+   ]
+  },
+  {
+   "a": "Yeat",
+   "t": "Bad 4 me",
+   "e": null,
+   "s": "grail",
+   "al": [
+    "bad for me"
+   ]
+  },
+  {
+   "a": "Yeat",
+   "t": "Tf up",
+   "e": "2 Alivë"
+  },
+  {
+   "a": "Yeat",
+   "t": "Power trip",
+   "e": "2093"
+  },
+  {
+   "a": "Yeat",
+   "t": "COKE",
+   "e": "Lyfëstyle"
+  },
+  {
+   "a": "Yeat",
+   "t": "Jealousy",
+   "e": "Lil Yeat SoundCloud"
+  },
+  {
+   "a": "Yeat",
+   "t": "Miami",
+   "e": "Lil Yeat SoundCloud"
+  },
+  {
+   "a": "Summrs",
+   "t": "Already Said It",
+   "e": "Nothing More Nothing LESS",
+   "p": 28
+  },
+  {
+   "a": "Summrs",
+   "t": "Butterfly",
+   "e": "TALE OF DA RAVEN",
+   "p": 6
+  },
+  {
+   "a": "Summrs",
+   "t": "grandson",
+   "e": "Nothing More Nothing LESS",
+   "p": 5
+  },
+  {
+   "a": "Summrs",
+   "t": "Held It Down 2",
+   "e": "Revived",
+   "p": 4
+  },
+  {
+   "a": "Summrs",
+   "t": "Wish You Well",
+   "e": "Nothing More Nothing LESS",
+   "p": 4
+  },
+  {
+   "a": "Summrs",
+   "t": "Red Flag",
+   "e": "Nothing More Nothing LESS",
+   "p": 4
+  },
+  {
+   "a": "Summrs",
+   "t": "Stuck Asf",
+   "e": "##Bellworld 2",
+   "p": 3
+  },
+  {
+   "a": "Summrs",
+   "t": "Anything!",
+   "e": "Archive",
+   "s": "bestof",
+   "al": [
+    "anything"
+   ]
+  },
+  {
+   "a": "Summrs",
+   "t": "Ghost Glocks",
+   "e": "Archive"
+  },
+  {
+   "a": "Summrs",
+   "t": "Coach 2",
+   "e": "Archive"
+  },
+  {
+   "a": "Summrs",
+   "t": "Cant Be Serious!",
+   "e": "Archive",
+   "al": [
+    "cant be serious"
+   ]
+  },
+  {
+   "a": "Summrs",
+   "t": "Crushin on Leah",
+   "e": "Archive"
+  },
+  {
+   "a": "Summrs",
+   "t": "Martin & Gina",
+   "e": "Archive",
+   "al": [
+    "martin and gina"
+   ]
+  },
+  {
+   "a": "Summrs",
+   "t": "Stressin!",
+   "e": "Archive",
+   "al": [
+    "stressin"
+   ]
+  },
+  {
+   "a": "Summrs",
+   "t": "Desire You",
+   "e": "Archive"
+  },
+  {
+   "a": "Summrs",
+   "t": "Cathedral",
+   "e": "Archive"
+  },
+  {
+   "a": "Summrs",
+   "t": "IDFW Niggas",
+   "e": null
+  },
+  {
+   "a": "Summrs",
+   "t": "Victorious!",
+   "e": "What We Have",
+   "al": [
+    "victorious"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Nachos!",
+   "e": "Golden Child",
+   "p": 6,
+   "al": [
+    "nachos"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Strika!",
+   "e": "Midnight Club 2",
+   "p": 5,
+   "al": [
+    "strika"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Out The Way!",
+   "e": "Solitary 2",
+   "p": 5,
+   "al": [
+    "out the way"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Peep This!",
+   "e": "Golden Child",
+   "p": 4,
+   "al": [
+    "peep this"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Wassup",
+   "e": "Midnight Club 2",
+   "p": 4
+  },
+  {
+   "a": "Autumn!",
+   "t": "All In!",
+   "e": "Golden Child",
+   "p": 4,
+   "al": [
+    "all in"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "HUNNID TEN",
+   "e": "Solitary",
+   "p": 3
+  },
+  {
+   "a": "Autumn!",
+   "t": "Breaking Bad!",
+   "e": "Solitary 2",
+   "p": 3,
+   "al": [
+    "breaking bad"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "No Rush!",
+   "e": "Solitary 2",
+   "p": 3,
+   "al": [
+    "no rush"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "In The City!",
+   "e": "Midnight Club 2",
+   "s": "grail",
+   "al": [
+    "in the city"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Lefty!",
+   "e": "Midnight Club 2",
+   "s": "grail",
+   "al": [
+    "lefty"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Copy Me! 2",
+   "e": "Ils Verront",
+   "s": "bestof",
+   "al": [
+    "copy me 2",
+    "finer things"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Beck!",
+   "e": "Midnight Club 2",
+   "al": [
+    "beck"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "DND",
+   "e": "Ils Verront"
+  },
+  {
+   "a": "Autumn!",
+   "t": "PTSD!",
+   "e": "Ils Verront",
+   "al": [
+    "ptsd"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "All 4 U!",
+   "e": "Archive",
+   "al": [
+    "all 4 u",
+    "all for you"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "I Think She The One!",
+   "e": "Archive",
+   "al": [
+    "i think she the one"
+   ]
+  },
+  {
+   "a": "Autumn!",
+   "t": "Deadly Boi!",
+   "e": "Archive",
+   "al": [
+    "deadly boi"
+   ]
+  },
+  {
+   "a": "Kankan",
+   "t": "Spend It",
+   "e": "##RR",
+   "p": 4
+  },
+  {
+   "a": "Kankan",
+   "t": "No Rules",
+   "e": "Way2Geeked Reloaded",
+   "p": 3
+  },
+  {
+   "a": "Kankan",
+   "t": "Catch A Hat",
+   "e": "Way2Geeked Reloaded",
+   "p": 3
+  },
+  {
+   "a": "Kankan",
+   "t": "Globe",
+   "e": "##RR"
+  },
+  {
+   "a": "Kankan",
+   "t": "Austin",
+   "e": "##RR"
+  },
+  {
+   "a": "Kankan",
+   "t": "Out Of State",
+   "e": "##RR"
+  },
+  {
+   "a": "Kankan",
+   "t": "High As Shit",
+   "e": "##RR"
+  },
+  {
+   "a": "Kankan",
+   "t": "Models & Codeine Bottles",
+   "e": "Really Rich Ent.",
+   "al": [
+    "models and codeine bottles"
+   ]
+  },
+  {
+   "a": "Kankan",
+   "t": "Fakk",
+   "e": "Really Rich Ent."
+  },
+  {
+   "a": "Kankan",
+   "t": "X n Oxy",
+   "e": "##RR",
+   "al": [
+    "x and oxy"
+   ]
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "Can't You Tell",
+   "e": "Snotty Hill",
+   "p": 7
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "Homixide Gvng",
+   "e": "Snotty Hill",
+   "p": 5
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "NORBIT",
+   "e": "Homixide Lifestyle 2",
+   "p": 5
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "M!DN!GHT",
+   "e": "MADNESS",
+   "p": 4,
+   "al": [
+    "midnight"
+   ]
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "GYM",
+   "e": "5th Amndmnt",
+   "p": 4
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "MED5",
+   "e": "Homixide Lifestyle 2"
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "FLAMETHR0WER",
+   "e": "MADNESS",
+   "al": [
+    "flamethrower"
+   ]
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "STACKIN",
+   "e": "5th Amndmnt"
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "BLOOD IN BLOOD OUT",
+   "e": "5th Amndmnt"
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "1017 ALYX 95M",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "SSN",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Homixide Gang",
+   "t": "BARNACL3PLATT5R",
+   "e": null,
+   "s": "grail",
+   "al": [
+    "barnacleplatter"
+   ]
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "not a regular civilian",
+   "e": "With 2",
+   "p": 33
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "what zit tooya (Remix)",
+   "e": "Once More",
+   "al": [
+    "what zit tooya"
+   ]
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "clay keep a pole",
+   "e": "With"
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "Getting Him Gone",
+   "e": null
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "Bagwork",
+   "e": null
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "Diamond Rings",
+   "e": null
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "Hop Out",
+   "e": "Xavier"
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "Motto",
+   "e": "Xavier"
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "blahnah anthem",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "mixed out",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Xaviersobased",
+   "t": "Push Up",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Cross Me",
+   "e": "War 2",
+   "p": 19
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Pick A Side",
+   "e": "Never Apologize",
+   "p": 12
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Trackstar",
+   "e": "War 2",
+   "p": 8
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Sinner",
+   "e": "Never Apologize",
+   "p": 8
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Hate When It Rains",
+   "e": "After Me",
+   "p": 8
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Distance",
+   "e": "Between You and Me",
+   "p": 8
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Solely",
+   "e": "War 2",
+   "p": 7
+  },
+  {
+   "a": "SoFaygo",
+   "t": "I Pop Percs",
+   "e": "Pink Heartz"
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Free Sauce",
+   "e": "Pink Heartz"
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Riding Alone",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Nice To Meet You",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "SoFaygo",
+   "t": "Count Me Out",
+   "e": null,
+   "s": "grail"
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Afraid Of Love",
+   "e": "Diamonds",
+   "p": 7
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Everybody Hates Me",
+   "e": "Come Over When You're Sober",
+   "p": 5
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Skin To Skin",
+   "e": "Diamonds",
+   "p": 4
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Try It",
+   "e": "Come Over When You're Sober",
+   "p": 4
+  },
+  {
+   "a": "Lil Peep",
+   "t": "The Race",
+   "e": "Diamonds",
+   "p": 4
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Wait In Line",
+   "e": "Diamonds",
+   "p": 3
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Lip Gloss",
+   "e": "1/8 2 Da Fvce"
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Eating The Rest",
+   "e": "1/8 2 Da Fvce"
+  },
+  {
+   "a": "Lil Peep",
+   "t": "Made It Hoe",
+   "e": "Gooseyhoe"
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "Show The World",
+   "e": null,
+   "p": 30
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "garette's REVENGE",
+   "e": "17",
+   "p": 12,
+   "al": [
+    "garettes revenge"
+   ]
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "News/Flock",
+   "e": null,
+   "p": 11,
+   "al": [
+    "news flock"
+   ]
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "Freddy vs Jason",
+   "e": "Members Only Vol. 1",
+   "p": 9
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "School Globes",
+   "e": "17",
+   "p": 8
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "Bluddy Katon freestyle",
+   "e": null,
+   "p": 7
+  },
+  {
+   "a": "XXXTentacion",
+   "t": "Black Cat",
+   "e": null,
+   "p": 6
+  }
+ ]
+}
