@@ -1,6 +1,6 @@
 # Catalog build report
 
-Generated 2026-11-13T06:51:30.935Z
+Generated 2026-11-13T07:08:57.810Z
 
 | Artist | Matched | Fans | Albums | Released | Unreleased | Notes |
 |---|---|---|---|---|---|---|
@@ -15,13 +15,13 @@ Generated 2026-11-13T06:51:30.935Z
 | Chief Keef | #2934901 | 401076 | 80 | 638 | 0 | top: Love Sosa / Hate Bein' Sober / I Don't Like |
 | Lil Ugly Mane | #8334340 | 3838 | 25 | 199 | 0 | top: headboard / Throw Dem Gunz / porcelain slightly |
 | Bladee | #5804578 | 23524 | 62 | 246 | 9 | also: Bladee#414036542(0); top: Girls Just Want to Have Fun / Expression On Your Face / The Flag is Raised; tracker: no Era/Name header; Drain Gang Archive: 9 |
-| Ecco2k | — | 0 | 0 | 0 | 0 | NOT FOUND (pin it in overrides.json). candidates: Ecco2k#6073616(14574) |
-| Thaiboy Digital | — | 0 | 0 | 0 | 0 | NOT FOUND (pin it in overrides.json). candidates: Thaiboy Digital#6073614(7523) |
-| XXXTentacion | #9822974 | 4711417 | 33 | 158 | 126 | also: Xxxtentacion#49785692(7); top: Moonlight / SAD! / Hope |
+| Ecco2k | #6073616 | 14574 | 19 | 76 | 0 | top: Sky Burial / MAKKA / Girls Just Want to Have Fun |
+| Thaiboy Digital | #6073614 | 7523 | 26 | 94 | 0 | top: Western Union / TL;DR / Diamonds |
+| XXXTentacion | #9822974 | 4711419 | 33 | 158 | 126 | also: Xxxtentacion#49785692(7); top: Moonlight / SAD! / Hope |
 | Lil Peep | #11420468 | 1276644 | 76 | 188 | 134 | top: Falling Down / nuts / Save That Shit |
-| Lil Uzi Vert | #7101343 | 1255563 | 67 | 201 | 0 | also: Lil Uzi Vert#412420311(0), Lil Uzi Vert#415017722(0); top: What You Saying / XO Tour Llif3 / 20 Min; tracker: HTTP 401 |
-| Playboi Carti | #10002824 | 850151 | 14 | 98 | 600 | top: Sky / RATHER LIE / Magnolia |
-| Juice WRLD | #14456487 | 2514872 | 42 | 145 | 600 | also: Juice Wrld#14877991(25); top: Lucid Dreams / Hate Me / All Girls Are The Same |
+| Lil Uzi Vert | #7101343 | 1255564 | 67 | 201 | 0 | also: Lil Uzi Vert#412420311(0), Lil Uzi Vert#415017722(0); top: What You Saying / XO Tour Llif3 / 20 Min; tracker: HTTP 401 |
+| Playboi Carti | #10002824 | 850153 | 14 | 98 | 600 | top: Sky / RATHER LIE / Magnolia |
+| Juice WRLD | #14456487 | 2514876 | 42 | 145 | 600 | also: Juice Wrld#14877991(25); top: Lucid Dreams / Hate Me / All Girls Are The Same |
 | Trippie Redd | #11934257 | 732126 | 80 | 310 | 600 | top: Forever Ever / Wish / Hurts Me; 1400 Vault: 23 |
 | Lil Pump | #10668131 | 674874 | 70 | 95 | 301 | top: Arms Around You / I Love It / Gucci Gang |
 | Smokepurpp | #10502441 | 88810 | 59 | 129 | 432 | also: Smoke Purpp#12292324(138), Smokepurpp#279401701(0); top: Do Not Disturb / Audi. / What I Please |
@@ -60,7 +60,7 @@ Generated 2026-11-13T06:51:30.935Z
 | Tony Shhnow | #13648523 | 1247 | 80 | 356 | 0 | top: Mind Of Da Crook / real runtz / Casting Couch |
 | 1600J | #14668289 | 580 | 80 | 233 | 0 | also: 1600J!#342723891(0); top: Like That / Number (N)ine / Play Around |
 | Dro Kenji | #15245663 | 3273 | 48 | 187 | 0 | also: Drø Kenji#397545391(0); top: FINDERS KEEPERS / USED2KNOW / SYLLABLE |
-| Riovaz | — | 0 | 0 | 0 | 0 | NOT FOUND (pin it in overrides.json). candidates: Riovaz#69516942(4424) |
+| Riovaz | #69516942 | 4424 | 41 | 68 | 0 | top: Prom Night / Heart Racing / lost without you |
 | Ken Carson | #2568121 | 112931 | 25 | 141 | 350 | top: ss / Fighting My Demons / Yale |
 | Destroy Lonely | #14063641 | 68426 | 51 | 173 | 600 | also: Destroy Lonely#203783947(4); top: if looks could kill / NOSTYLIST / Bane |
 | Homixide Gang | #131241772 | 20824 | 5 | 5 | 365 | also: HXG#271655112(1326); top: SSN / NoEvi / 'DAMN' |
@@ -100,10 +100,10 @@ Generated 2026-11-13T06:51:30.935Z
 | bleood | #243491891 | 2250 | 35 | 90 | 0 | top: i kno u kno wat u did / aw02 angel cry / she loves me i hate her |
 | Edward Skeletrix | #217732385 | 1558 | 65 | 84 | 0 | top: Slavery / Drug Dealer Injects His Fentanyl (Psychosis) / 정말많이정들었어요! Im So Attached |
 | fakemink | #264541262 | 12699 | 80 | 117 | 89 | top: Fever / Night , Blooming Jasmine . / Chiltern Firehouse .; fakemink archive: 35 |
-| 2hollis | — | 0 | 0 | 0 | 0 | NOT FOUND (pin it in overrides.json). candidates: 2hollis#110333102(14095); tracker: HTTP 401 |
+| 2hollis | #110333102 | 14095 | 17 | 67 | 0 | top: poster boy / Spring (Love Me) / The Lady In Red; tracker: HTTP 401 |
 | Nine Vicious | #273917071 | 6228 | 16 | 111 | 0 | top: Racks Blue / U Fancy ? / Trevon O'Ryan Echols; tracker: HTTP 401 |
 | LAZER DIM 700 | #159929712 | 6896 | 80 | 307 | 268 | top: WTM / BLAMMER / eternal bleeding |
-| jaydes | #246123822 | 0 | 29 | 30 | 0 | picked rap-tagged artist over bigger namesake; also: Jaydes#53305692(6110), Jay Des#130431692(0); top: We Knew / OMW / Smoke Rise |
+| jaydes | #53305692 | 6110 | 37 | 94 | 0 | top: hysteric / poison / misery |
 | 1oneam | #77838252 | 3707 | 35 | 111 | 0 | top: Vogue / Death of Me / Want To |
 | Protect | #85350602 | 1315 | 50 | 108 | 0 | top: Ac130 / SMS / bbysit |
 | Ohsxnta | #127229902 | 462 | 16 | 29 | 0 | top: Change / Fuck Up Chos' / I Want My Heart Back |
