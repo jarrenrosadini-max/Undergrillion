@@ -420,10 +420,6 @@
    "sheet": "1Y5F5onxyeaAbmebnOFYvkDBSHWoU74_YnIIyPXd_QVc"
   },
   {
-   "name": "Yung Fazo",
-   "scene": "opium"
-  },
-  {
    "name": "yvngxchris",
    "scene": "opium"
   },
@@ -669,13 +665,31 @@
   },
   {
    "name": "Tezzus",
-   "scene": "oway"
+   "scene": "oway",
+   "hint": "ØUTRØ"
   },
   {
    "name": "diamond*",
    "scene": "oway",
    "aliases": [
     "diamond"
+   ],
+   "hint": "bada bing"
+  },
+  {
+   "name": "Sk8star",
+   "scene": "oway",
+   "aliases": [
+    "sk8 star",
+    "skatestar"
+   ],
+   "hint": "Muse"
+  },
+  {
+   "name": "Yung Fazo",
+   "scene": "oway",
+   "aliases": [
+    "fazo"
    ]
   },
   {
@@ -684,6 +698,23 @@
    "aliases": [
     "pz"
    ]
+  },
+  {
+   "name": "Southsidesilhouette",
+   "scene": "oway",
+   "aliases": [
+    "southside silhouette"
+   ],
+   "hint": "Flat Shoals"
+  },
+  {
+   "name": "EA TJ",
+   "scene": "oway",
+   "aliases": [
+    "ea tj",
+    "eatj"
+   ],
+   "hint": "RAF"
   },
   {
    "name": "10kdunkin",
@@ -697,11 +728,46 @@
    "scene": "oway",
    "aliases": [
     "billion"
-   ]
+   ],
+   "hint": "TALISMAN"
   },
   {
    "name": "ShawtyRokk",
+   "scene": "oway",
+   "aliases": [
+    "shawty rokk"
+   ]
+  },
+  {
+   "name": "Lil Righteous",
+   "scene": "oway",
+   "hint": "Cavalli"
+  },
+  {
+   "name": "LilKixkDor",
+   "scene": "oway",
+   "aliases": [
+    "lil kixkdor",
+    "lilkixkdor"
+   ]
+  },
+  {
+   "name": "Reezy X",
+   "scene": "oway",
+   "aliases": [
+    "reezyx"
+   ]
+  },
+  {
+   "name": "Percaso",
    "scene": "oway"
+  },
+  {
+   "name": "Diorvsyou",
+   "scene": "oway",
+   "aliases": [
+    "dior vs you"
+   ]
   },
   {
    "name": "DracoFM",

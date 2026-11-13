@@ -187,9 +187,17 @@ export function ensureTopTiers(q) {
   return q;
 }
 
-const NEW_SCENES = ['newwave', 'oway'];
-const POOL_LABEL = { newwave: 'a current underground artist', pluggnb: 'a plugg / pluggnb artist', opium: 'an Opium / rage-era artist', soundcloud: 'a SoundCloud-era rapper' };
-const POOL_YEARS = { newwave: [2022, 2023, 2024, 2025, 2026], pluggnb: [2018, 2019, 2020, 2021], opium: [2021, 2022, 2023, 2024, 2025], soundcloud: [2016, 2017, 2018] };
+// Broad pools. Older eras get only very broad prompts (any song / any project);
+// current scenes also get year prompts.
+const POOLS = {
+  newwave: { scenes: ['newwave', 'oway'], label: 'any current underground artist', years: [2022, 2023, 2024, 2025, 2026] },
+  oway: { scenes: ['oway'], label: 'any ØWAY member or affiliate', years: [] },
+  opium: { scenes: ['opium'], label: 'any Opium / rage-era artist', years: [2021, 2022, 2023, 2024, 2025] },
+  pluggnb: { scenes: ['pluggnb'], label: 'any plugg / pluggnb artist', years: [] },
+  soundcloud: { scenes: ['soundcloud'], label: 'any SoundCloud-era rapper', years: [] },
+  early: { scenes: ['early', 'drain'], label: 'any early-2010s internet rap artist', years: [] },
+};
+const OLD_ERAS = new Set(['early', 'soundcloud', 'pluggnb']);
 
 // catalog: {artists:[{n, sc, al, f, p, alb:[[title,type,year]], rel:[[title,rank,albumIdx]], unr:[[title,era,status]]}]}
 // solo: artist names big enough for their own "Name a ___ song" prompts. Everyone else
@@ -208,6 +216,7 @@ export function buildCatalogQuestions(catalog, leakData, solo = []) {
     const id = slug(ar.n);
     if (!soloSet.has(id)) continue;
     const era = SCENE_ERA[ar.sc] || 'wildcard';
+    if (OLD_ERAS.has(era)) continue; // older eras: broad prompts only
     const unr = ar.unr.map(([t, e, s]) => ({ t, e, s }));
     for (const l of leakData?.leaks || []) if (slug(l.a) === id && !unr.some(u => slug(u.t) === slug(l.t)) && !ar.rel.some(r => slug(r[0]) === slug(l.t))) unr.push({ t: l.t, e: l.e, s: l.s, al: l.al });
     const isGrail = u => { const c = leakIdx.get(id + '|' + slug(u.t)); return u.s === 'grail' || u.s === 'bestof' || c?.s === 'grail' || c?.s === 'bestof'; };
@@ -248,64 +257,61 @@ export function buildCatalogQuestions(catalog, leakData, solo = []) {
   }
 
   // ---- Broad pools: everyone counts here ----
-  for (const [sc, years] of Object.entries(POOL_YEARS)) {
-    const scenes = sc === 'newwave' ? NEW_SCENES : [sc];
-    const pool = artists.filter(a => scenes.includes(a.sc));
-    if (pool.length < 4) continue;
-    const era = SCENE_ERA[sc];
-    // Artist pool (all years), tiered by fan count
-    const byFans = pool.slice().sort((a, b) => b.f - a.f);
-    out.push({
-      id: `pool-artists-${sc}`, era, kind: 'n', src: 'pool',
-      prompt: `Name ${POOL_LABEL[sc]}`,
-      fact: `Rarity follows each artist's fan count. The biggest name here is ${byFans[0].n}.`,
-      answers: byFans.map((a, i) => ({ text: a.n, aliases: a.al, tier: tierByRank(i, byFans.length) })),
-      whitelist: [],
+  const rankSongs = (pool, keep = () => true) => {
+    const songs = new Map();
+    for (const a of pool) a.rel.forEach(([t, rank, ai]) => {
+      if (!keep(a.alb[ai])) return;
+      const k = slug(t); const prev = songs.get(k);
+      if (!prev || rank > prev.rank) songs.set(k, { t, rank, by: a.n });
     });
-    for (const y of years) {
-      const ys = String(y);
-      // songs from that year (title -> best rank, artist)
-      const songs = new Map();
-      const projects = new Map();
-      const who = new Map();
-      for (const a of pool) {
-        a.rel.forEach(([t, rank, ai]) => {
-          const al = a.alb[ai]; if (!al || al[2] !== ys) return;
-          const k = slug(t); const prev = songs.get(k);
-          if (!prev || rank > prev.rank) songs.set(k, { t, rank, by: a.n });
-        });
-        const sc2 = new Map();
-        a.rel.forEach(([, rank, ai]) => sc2.set(ai, Math.max(sc2.get(ai) || 0, rank)));
-        a.alb.forEach((al, ai) => {
-          if (al[2] !== ys || !(al[1] === 'album' || al[1] === 'ep')) return;
-          const k = slug(al[0]); const r = sc2.get(ai) || 0; const prev = projects.get(k);
-          if (!prev || r > prev.rank) projects.set(k, { t: al[0], rank: r, by: a.n });
-          who.set(a.n, a);
-        });
-      }
-      const songList = [...songs.values()].sort((a, b) => b.rank - a.rank);
-      if (songList.length >= 40) out.push({
-        id: `pool-songs-${sc}-${ys}`, era, kind: 't', src: 'pool', year: y,
-        prompt: `Name a song released in ${ys} by ${POOL_LABEL[sc]}`,
-        fact: `${songList.length} songs qualify. The biggest: "${songList[0].t}" by ${songList[0].by}.`,
-        answers: songList.map((s, i) => ({ text: s.t, tier: tierByRank(i, songList.length), aliases: [], by: s.by })),
-        whitelist: [],
+    return [...songs.values()].sort((x, y) => y.rank - x.rank);
+  };
+  const rankProjects = (pool, keep = () => true) => {
+    const projects = new Map();
+    for (const a of pool) {
+      const best = new Map();
+      a.rel.forEach(([, rank, ai]) => best.set(ai, Math.max(best.get(ai) || 0, rank)));
+      a.alb.forEach((al, ai) => {
+        if (!(al[1] === 'album' || al[1] === 'ep') || !keep(al)) return;
+        const k = slug(al[0]); const r = best.get(ai) || 0; const prev = projects.get(k);
+        if (!prev || r > prev.rank) projects.set(k, { t: al[0], rank: r, by: a.n });
       });
-      const projList = [...projects.values()].sort((a, b) => b.rank - a.rank);
-      if (projList.length >= 10) out.push({
-        id: `pool-projects-${sc}-${ys}`, era, kind: 't', src: 'pool', year: y,
-        prompt: `Name an album or EP that dropped in ${ys} by ${POOL_LABEL[sc]}`,
-        fact: `${projList.length} projects qualify. The biggest: ${projList[0].t} by ${projList[0].by}.`,
-        answers: projList.map((s, i) => ({ text: s.t, tier: tierByRank(i, projList.length), aliases: [], by: s.by })),
-        whitelist: [],
+    }
+    return [...projects.values()].sort((x, y) => y.rank - x.rank);
+  };
+  const toAnswers = list => list.map((x, i) => ({ text: x.t, tier: tierByRank(i, list.length), aliases: [], by: x.by }));
+
+  for (const [key, cfg] of Object.entries(POOLS)) {
+    const pool = artists.filter(a => cfg.scenes.includes(a.sc));
+    if (pool.length < 3) continue;
+    const era = key === 'oway' ? 'newwave' : SCENE_ERA[key];
+    const songs = rankSongs(pool), projects = rankProjects(pool);
+    if (songs.length >= 30) out.push({
+      id: `any-songs-${key}`, era, kind: 't', src: 'pool',
+      prompt: `Name a song by ${cfg.label}`,
+      fact: `${songs.length.toLocaleString()} songs count here. The biggest: "${songs[0].t}" by ${songs[0].by}.`,
+      answers: toAnswers(songs), whitelist: [],
+    });
+    if (projects.length >= 8) out.push({
+      id: `any-projects-${key}`, era, kind: 't', src: 'pool',
+      prompt: `Name an album or EP by ${cfg.label}`,
+      fact: `${projects.length} projects count here. The biggest: ${projects[0].t} by ${projects[0].by}.`,
+      answers: toAnswers(projects), whitelist: [],
+    });
+    for (const y of cfg.years) {
+      const ys = String(y), inYear = al => al && al[2] === ys;
+      const ySongs = rankSongs(pool, inYear), yProj = rankProjects(pool, inYear);
+      if (ySongs.length >= 40) out.push({
+        id: `year-songs-${key}-${ys}`, era, kind: 't', src: 'pool', year: y,
+        prompt: `Name a song released in ${ys} by ${cfg.label}`,
+        fact: `${ySongs.length} songs qualify. The biggest: "${ySongs[0].t}" by ${ySongs[0].by}.`,
+        answers: toAnswers(ySongs), whitelist: [],
       });
-      const whoList = [...who.values()].sort((a, b) => b.f - a.f);
-      if (whoList.length >= 8) out.push({
-        id: `pool-who-${sc}-${ys}`, era, kind: 'n', src: 'pool', year: y,
-        prompt: `Name ${POOL_LABEL[sc]} who dropped an album or EP in ${ys}`,
-        fact: `${whoList.length} artists qualify.`,
-        answers: whoList.map((a, i) => ({ text: a.n, aliases: a.al, tier: tierByRank(i, whoList.length) })),
-        whitelist: [],
+      if (yProj.length >= 10) out.push({
+        id: `year-projects-${key}-${ys}`, era, kind: 't', src: 'pool', year: y,
+        prompt: `Name an album or EP that dropped in ${ys} by ${cfg.label}`,
+        fact: `${yProj.length} projects qualify. The biggest: ${yProj[0].t} by ${yProj[0].by}.`,
+        answers: toAnswers(yProj), whitelist: [],
       });
     }
   }
