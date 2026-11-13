@@ -16,6 +16,7 @@
 </head>
 <body>
   <div class="scene" id="scene" aria-hidden="true"></div>
+  <div class="particles" id="particles" aria-hidden="true"></div>
   <div class="scene-shade" aria-hidden="true"></div>
 
   <div class="app">
@@ -38,6 +39,7 @@
         <div>
           <div class="venue-label" id="venue-label">NOW PLAYING</div>
           <div class="venue-name" id="venue-name">Bedroom</div>
+          <div class="venue-sub" id="venue-sub"></div>
         </div>
         <div class="venue-next" id="venue-next"></div>
       </div>
@@ -110,7 +112,7 @@
     <section id="end" class="end glass hidden">
       <div class="end-top">
         <div>
-          <div class="end-label">TONIGHT'S SHOW</div>
+          <div class="end-label" id="end-label">TONIGHT'S SHOW</div>
           <div class="end-venue" id="end-venue">House Party</div>
         </div>
         <div class="end-score"><b id="end-pts">0</b><span>pts</span></div>
@@ -138,8 +140,9 @@
       <div class="end-actions">
         <button class="btn-primary" id="btn-share">Share result</button>
         <button class="btn-ghost" id="btn-to-openmic">Keep playing: Open Mic</button>
+        <button class="btn-primary hidden" id="btn-again">Run it back: next 7</button>
       </div>
-      <div class="next-daily">Next Daily Set in <b id="countdown">--:--:--</b></div>
+      <div class="next-daily" id="next-daily">Next Daily Set in <b id="countdown">--:--:--</b></div>
       <div class="ad-slot ad-box" data-ad="results-box" aria-hidden="true"></div>
     </section>
 
@@ -165,8 +168,8 @@
         <li><span class="tag t7">Day One</span> 100</li>
         <li><span class="tag twack">Wack</span> 0 · 3 tries per prompt</li>
       </ul>
-      <p><b>Daily Set:</b> 7 prompts, 25 seconds each, the same for everyone. <b>Open Mic:</b> endless practice at half the fans.</p>
-      <p>Your fans move you through real-feeling venues, from your bedroom to the Rolling Loud main stage. The room reacts to every answer, and rarer answers go harder.</p>
+      <p><b>Daily Set:</b> 7 prompts, 25 seconds each, the same for everyone. <b>Open Mic:</b> rounds of 7 at half the fans. Play as many rounds as you want.</p>
+      <p>Your fans move you through real-feeling venues, from your bedroom to the Rolling Loud main stage. The room reacts to every answer, and rarer answers go harder. Tap the crowd to hype them up.</p>
       <p>Tap <b>🔥</b> for your streak and <b>👥</b> for your fans and venues.</p>
       <button class="btn-primary" id="btn-help-close">Got it</button>
     </div>
