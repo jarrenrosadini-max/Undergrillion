@@ -104,10 +104,10 @@ export function matchAnswer(input, answers, whitelist = [], kind = 't') {
 // suggestions never reveal which answers are valid for the current prompt.
 export function buildDictionary(questions, catalog) {
   const map = new Map();
-  const add = t => { const n = normalize(t); if (n && n.length > 1 && !map.has(n)) map.set(n, t); };
-  for (const q of questions) for (const a of q.answers) add(a.text);
-  if (catalog) for (const ar of catalog.artists) { add(ar.n); ar.rel.forEach(r => add(r[0])); ar.alb.forEach(r => add(r[0])); }
-  return [...map.entries()].map(([n, t]) => ({ n, t, w: words(t) }));
+  const add = (t, p = 0) => { const n = normalize(t); if (!n || n.length < 2) return; const e = map.get(n); if (!e) map.set(n, { t, p }); else if (p > e.p) e.p = p; };
+  for (const q of questions) for (const a of q.answers) add(a.text, q.kind === 'n' ? 1 : 0);
+  if (catalog) for (const ar of catalog.artists) { add(ar.n, 2); ar.rel.forEach(r => add(r[0])); ar.alb.forEach(r => add(r[0])); }
+  return [...map.entries()].map(([n, e]) => ({ n, t: e.t, p: e.p, w: words(e.t) }));
 }
 export function suggest(dict, input, limit = 6) {
   const q = normalize(input);
@@ -120,9 +120,10 @@ export function suggest(dict, input, limit = 6) {
     else if (e.n.startsWith(q)) s = 1;
     else if (qw.length && qw.every(w => e.w.some(x => x.startsWith(w)))) s = 2;
     else if (q.length >= 4 && e.n.includes(q)) s = 3;
-    if (s >= 0) scored.push([s, e.t.length, e.t]);
+    if (s >= 0) scored.push([s, -e.p, e.t.length, e.t]);
   }
-  return scored.sort((a, b) => a[0] - b[0] || a[1] - b[1]).slice(0, limit).map(x => x[2]);
+  // exact/prefix first, then artist names, then shorter titles
+  return scored.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).slice(0, limit).map(x => x[3]);
 }
 
 // ---------- RNG ----------

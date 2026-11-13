@@ -35,6 +35,14 @@ async function all(path) {
 
 const clean = t => String(t).replace(/\s*[([](?:feat|ft|with|prod)[^)\]]*[)\]]/gi, '').replace(/\s+/g, ' ').trim();
 
+async function isRap(id) {
+  // Deezer genre 116 = Rap/Hip Hop. Check up to 3 releases.
+  try {
+    const albums = (await api(`/artist/${id}/albums?limit=3`)).data || [];
+    for (const al of albums) { const d = await api(`/album/${al.id}`); if ((d.genres?.data || []).some(g => g.id === 116) || d.genre_id === 116) return true; }
+  } catch { /* ignore */ }
+  return false;
+}
 async function findArtist(a) {
   if (overrides[a.name]?.deezerId) {
     const j = await api(`/artist/${overrides[a.name].deezerId}`);
@@ -42,14 +50,16 @@ async function findArtist(a) {
   }
   const names = [a.name, ...(a.aliases || [])].map(normalize);
   const res = await api(`/search/artist?q=${encodeURIComponent(a.name)}&limit=25`);
-  const exact = (res.data || []).filter(x => names.includes(normalize(x.name)));
+  const exact = (res.data || []).filter(x => names.includes(normalize(x.name))).sort((x, y) => y.nb_fan - x.nb_fan);
   if (!exact.length) return { pick: null, alts: (res.data || []).slice(0, 5) };
-  if (exact.length === 1 || !a.hint) return { pick: exact.sort((x, y) => y.nb_fan - x.nb_fan)[0], alts: exact.slice(1, 4) };
-  for (const cand of exact.sort((x, y) => y.nb_fan - x.nb_fan)) {
+  const cands = exact.slice(0, 5);
+  if (a.hint) for (const cand of cands) {
     const top = await api(`/artist/${cand.id}/top?limit=50`);
     if ((top.data || []).some(t => normalize(t.title).includes(normalize(a.hint)))) return { pick: cand, alts: exact.filter(x => x !== cand).slice(0, 3) };
   }
-  return { pick: exact[0], alts: exact.slice(1, 4), unsure: true };
+  if (a.producer) return { pick: cands[0], alts: exact.slice(1, 4) };
+  for (const cand of cands) if (await isRap(cand.id)) return { pick: cand, alts: exact.filter(x => x !== cand).slice(0, 3), unsure: cand !== cands[0] ? 'picked rap-tagged artist over bigger namesake' : false };
+  return { pick: null, alts: cands, unsure: 'no rap-tagged match' };
 }
 
 async function discography(id) {
@@ -99,14 +109,22 @@ function cleanLeak(raw, artistNames) {
   return { t: s, s: status };
 }
 
-async function trackerLeaks(sheetId, artistNames) {
-  const res = await fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`, { redirect: 'follow' });
+async function fetchSheet(url) {
+  const res = await fetch(url, { redirect: 'follow' });
   if (!res.ok) throw new Error('HTTP ' + res.status);
   const text = await res.text();
-  if (text.trim().startsWith('<')) throw new Error('sheet not public');
-  const rows = parseCSV(text);
-  const hi = rows.findIndex(r => r.some(c => /^name/i.test(c.trim())) && r.some(c => /^era/i.test(c.trim())));
-  if (hi < 0) throw new Error('no Era/Name header');
+  if (text.trim().startsWith('<')) throw new Error('not public');
+  return parseCSV(text);
+}
+const headerRow = rows => rows.findIndex(r => r.some(c => /^name/i.test(c.trim())) && r.some(c => /^era/i.test(c.trim())));
+async function trackerLeaks(sheetId, artistNames) {
+  const base = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+  const tries = [`${base}/export?format=csv`, ...['Unreleased', 'Unreleased Songs', 'Main', 'Tracker', 'Songs'].map(n => `${base}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(n)}`), `${base}/gviz/tq?tqx=out:csv`];
+  let rows = null, hi = -1, lastErr = 'no Era/Name header';
+  for (const u of tries) {
+    try { const r = await fetchSheet(u); const h = headerRow(r); if (h >= 0) { rows = r; hi = h; break; } } catch (e) { lastErr = e.message; }
+  }
+  if (!rows) throw new Error(lastErr);
   const h = rows[hi].map(c => c.trim().toLowerCase());
   const ni = h.findIndex(c => c.startsWith('name')), ei = h.findIndex(c => c.startsWith('era'));
   const out = [];
@@ -140,9 +158,10 @@ for (const a of roster.artists) {
     if (pick) {
       entry.f = pick.nb_fan || 0; entry.id = pick.id;
       if (!a.producer) Object.assign(entry, await discography(pick.id));
-      if (unsure) notes.push('hint not found, picked most fans');
+      if (unsure) notes.push(unsure);
       if (alts.length) notes.push('also: ' + alts.map(x => `${x.name}#${x.id}(${x.nb_fan})`).join(', '));
-    } else notes.push('NOT FOUND. top results: ' + alts.map(x => `${x.name}#${x.id}`).join(', '));
+      notes.push('top: ' + entry.rel.slice(0, 3).map(r => r[0]).join(' / '));
+    } else notes.push('NOT FOUND (pin it in overrides.json). candidates: ' + alts.map(x => `${x.name}#${x.id}(${x.nb_fan})`).join(', '));
   } catch (e) { notes.push('deezer error: ' + e.message); }
 
   const released = new Set(entry.rel.map(r => normalize(r[0])));

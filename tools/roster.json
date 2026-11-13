@@ -1,136 +1,769 @@
 {
-  "_doc": "Artists the catalog builder pulls. scene: early|soundcloud|pluggnb|opium|newwave|drain|oway|producer. hint = a known song title used to pick the right artist when names collide. sheet = community tracker Google Sheet ID (unreleased songs). archives = Spotify/Deezer fan-archive accounts whose uploads count as that artist's unreleased songs. producer:true = no 'name a song' prompts.",
-  "artists": [
-    {"name":"Lil B","scene":"early","aliases":["basedgod","the basedgod"],"hint":"Wonton Soup"},
-    {"name":"SpaceGhostPurrp","scene":"early","aliases":["sgp"]},
-    {"name":"Denzel Curry","scene":"early","hint":"Ultimate"},
-    {"name":"Xavier Wulf","scene":"early","aliases":["ethelwulf"]},
-    {"name":"Chris Travis","scene":"early"},
-    {"name":"Bones","scene":"early","aliases":["teamsesh"],"hint":"HDMI"},
-    {"name":"Yung Lean","scene":"early","hint":"Ginseng Strip 2002"},
-    {"name":"Black Kray","scene":"early","aliases":["sickboyrari"]},
-    {"name":"Chief Keef","scene":"early","aliases":["sosa"],"hint":"Love Sosa"},
-    {"name":"Lil Ugly Mane","scene":"early"},
-    {"name":"Bladee","scene":"drain","hint":"Be Nice 2 Me","sheet":"1skAByFoveXb7PussjJWUBnyl5H8K79LoNpLslRTttNU","archives":["Drain Gang Archive"]},
-    {"name":"Ecco2k","scene":"drain"},
-    {"name":"Thaiboy Digital","scene":"drain"},
-
-    {"name":"XXXTentacion","scene":"soundcloud","aliases":["xxx","x"],"hint":"SAD!","sheet":"1vMEIba05N8zD2iSh_knAkAMzyrm9rtreu1NJeyNZj0I"},
-    {"name":"Lil Peep","scene":"soundcloud","aliases":["peep"],"hint":"Star Shopping","sheet":"1kF3KZUjtwiJxxP0GCXJ0VmX7bA2JdwnKa-j1GCaoeC8"},
-    {"name":"Lil Uzi Vert","scene":"soundcloud","aliases":["uzi","lil uzi"],"hint":"XO Tour Llif3","sheet":"1zqqdIds1iwnx4lh29iF1IlraeuqfGhxH9qLNlWOnryo"},
-    {"name":"Playboi Carti","scene":"soundcloud","aliases":["carti","king vamp"],"hint":"Magnolia","sheet":"1ivoRJskby8zykhH_szifY4a1HIQCTnVh6c2WfIfMbkM"},
-    {"name":"Juice WRLD","scene":"soundcloud","aliases":["juice"],"hint":"Lucid Dreams","sheet":"1tD3ytt5wPx4zfcefXi5ATeYhIiDaugWjMS46nZrP568"},
-    {"name":"Trippie Redd","scene":"soundcloud","aliases":["trippie"],"hint":"Love Scars","sheet":"1hZdGFBZmukWGH4IlnH0NJvphwEct2XEMJT_moTFhTvc","archives":["1400 Vault"]},
-    {"name":"Lil Pump","scene":"soundcloud","aliases":["pump"],"hint":"Gucci Gang","sheet":"1DCYxExj15O6YUB4diwhSN_A8xRjAFIAg8KlW5BhgZQI"},
-    {"name":"Smokepurpp","scene":"soundcloud","aliases":["purpp"],"hint":"Audi.","sheet":"1KrZM7GA-DeWqUWA4vaxYnY7d0rqxaQyuLhW8LUeh8sk"},
-    {"name":"Ski Mask The Slump God","scene":"soundcloud","aliases":["ski mask","$ki mask"],"hint":"Catch Me Outside","sheet":"1j7_2JVQ2eyaVA6vEQT89R8XhOXUR8KTJbVgTUm_ZD88"},
-    {"name":"Lil Yachty","scene":"soundcloud","aliases":["yachty","lil boat"],"hint":"One Night"},
-    {"name":"Lil Tracy","scene":"soundcloud","aliases":["yung bruh"]},
-    {"name":"$uicideboy$","scene":"soundcloud","aliases":["suicideboys"]},
-    {"name":"Wifisfuneral","scene":"soundcloud"},
-    {"name":"Lil Skies","scene":"soundcloud","hint":"Red Roses"},
-    {"name":"Comethazine","scene":"soundcloud"},
-    {"name":"Thouxanbanfauni","scene":"soundcloud","aliases":["fauni"]},
-    {"name":"UnoTheActivist","scene":"soundcloud","aliases":["uno"]},
-    {"name":"Famous Dex","scene":"soundcloud"},
-    {"name":"Lil Xan","scene":"soundcloud"},
-    {"name":"Yung Bans","scene":"soundcloud"},
-    {"name":"Warhol.ss","scene":"soundcloud","aliases":["warholss"]},
-    {"name":"Sheck Wes","scene":"soundcloud","hint":"Mo Bamba"},
-    {"name":"Tay-K","scene":"soundcloud","hint":"The Race"},
-    {"name":"Ugly God","scene":"soundcloud"},
-    {"name":"Lil Tecca","scene":"pluggnb","aliases":["tecca"],"hint":"Ransom","sheet":"15UwihAVwPeS6eIE1FE1J6v7xiBYFkculVrzhMSIcEew"},
-
-    {"name":"Summrs","scene":"pluggnb","aliases":["lil summrs","louiveedee"],"sheet":"13yCSXxHCBhNGzO6kBGr_MMmRDNLu9j4X10vn_CSBuG4","archives":["Summrs Archived","Summrs Worldwide"]},
-    {"name":"Autumn!","scene":"pluggnb","aliases":["autumn","twinuzis","trapgodbenji"],"sheet":"1agKp0OhugMnCFrZ1sPt4ipdhGHRTdgyLUiDb344XZQY","archives":["Autumn! Archive"]},
-    {"name":"Kankan","scene":"pluggnb"},
-    {"name":"KA$HDAMI","scene":"pluggnb","aliases":["kashdami","ka$hdami","dami"],"hint":"Reparations!"},
-    {"name":"SoFaygo","scene":"pluggnb","aliases":["faygo"],"hint":"Knock Knock","sheet":"1HISW5L6rWvEW-ZtHrUQRBbjwfOYTrTuzi5fgPkwtObQ"},
-    {"name":"Yeat","scene":"pluggnb","aliases":["lil yeat"],"hint":"Monëy so big","sheet":"1FUzAZyTCgFTVxQ--qbCAS2bUk4dsAw6ASxwjURPHbyI"},
-    {"name":"Desire","scene":"pluggnb","note":"Summrs' younger brother"},
-    {"name":"Lil Shine","scene":"pluggnb"},
-    {"name":"tana","scene":"pluggnb","aliases":["babysantana","baby santana"]},
-    {"name":"SSGKobe","scene":"pluggnb"},
-    {"name":"Izaya Tiji","scene":"pluggnb"},
-    {"name":"Iayze","scene":"pluggnb"},
-    {"name":"Rich Amiri","scene":"pluggnb","hint":"One Call"},
-    {"name":"Jace!","scene":"pluggnb","aliases":["jace"]},
-    {"name":"BoofPaxkMooky","scene":"pluggnb"},
-    {"name":"Tony Shhnow","scene":"pluggnb"},
-    {"name":"1600J","scene":"pluggnb"},
-    {"name":"Dro Kenji","scene":"pluggnb"},
-    {"name":"Riovaz","scene":"pluggnb"},
-
-    {"name":"Ken Carson","scene":"opium","aliases":["ken car$on","kenny"],"hint":"Yale","sheet":"1OARID98xCqRaBr8gyQCvI3aD4jKQDGgtedyRaiP_pyo"},
-    {"name":"Destroy Lonely","scene":"opium","aliases":["lone"],"hint":"NOSTYLIST","sheet":"1J16EyxHqZD4m0VZ6g6SoY_1GC21TU7P2kk9FeteSKvE"},
-    {"name":"Homixide Gang","scene":"opium","aliases":["hxg","homixide"],"sheet":"15eM2g5vJWJIRl1qRYZoGgbKxUXRqIANRKLykqM7ps2M"},
-    {"name":"ApolloRed1","scene":"opium","aliases":["apollo red 1","apollored"],"sheet":"1Y5F5onxyeaAbmebnOFYvkDBSHWoU74_YnIIyPXd_QVc"},
-    {"name":"Yung Fazo","scene":"opium"},
-    {"name":"yvngxchris","scene":"opium"},
-    {"name":"Lancey Foux","scene":"opium"},
-
-    {"name":"OsamaSon","scene":"newwave","aliases":["osama","pradaumari"],"hint":"withdrawals","sheet":"1qbJpawdwnw7IUkZ4FfU3oOF17griNjL59X5z6YFiFlY"},
-    {"name":"Nettspend","scene":"newwave","aliases":["nett"],"hint":"Drankdrankdrank","sheet":"16eHcEAYyogbgJ855YNtGpT0zRywZIVvGU-wm3PD_B_c"},
-    {"name":"Che","scene":"newwave","hint":"Pizza Time","sheet":"12xUUfE7amSKb7S3dNc4AHbRdViOdRU_KwSkASOANqv0","archives":["chechive"]},
-    {"name":"Glokk40Spaz","scene":"newwave","aliases":["glokk"]},
-    {"name":"Xaviersobased","scene":"newwave","aliases":["xavier"],"sheet":"1-YsBGzZVLBw_Dnm1tgndRJoRkPtS5WKW1XmPBbKPcS0"},
-    {"name":"Prettifun","scene":"newwave","aliases":["pretti fun"],"sheet":"1gHCN8bRLQPLz0jRRS2UBN9cZbgPLK8VSnAwAEJHzk9I"},
-    {"name":"Lucy Bedroque","scene":"newwave","aliases":["lucy"],"sheet":"1IlkdclBbOLonkadTBc_N-nK4XFEjKA8ZfIfK35dFNLc"},
-    {"name":"kuru","scene":"newwave"},
-    {"name":"Pradabagshawty","scene":"newwave","aliases":["prada","pradabag"],"archives":["prada archive"]},
-    {"name":"rexv2","scene":"newwave"},
-    {"name":"confetti","scene":"newwave"},
-    {"name":"xtsy*","scene":"newwave","aliases":["xtsy"]},
-    {"name":"iyrus","scene":"newwave"},
-    {"name":"YVES","scene":"newwave","aliases":["yves!","yves"],"sheet":"17qA7pviuxvP08vdmoosRqesMKsgk1qMKPaDUcTkmNRI"},
-    {"name":"1300Saint","scene":"newwave","aliases":["1300 saint"]},
-    {"name":"echstacy","scene":"newwave"},
-    {"name":"Egobreak","scene":"newwave"},
-    {"name":"vax","scene":"newwave"},
-    {"name":"maxon","scene":"newwave"},
-    {"name":"yit","scene":"newwave"},
-    {"name":"NoSaint","scene":"newwave"},
-    {"name":"BabyBartier","scene":"newwave"},
-    {"name":"Unitus","scene":"newwave"},
-    {"name":"Sir Untre","scene":"newwave"},
-    {"name":"Devstacks","scene":"newwave"},
-    {"name":"Lelo","scene":"newwave"},
-    {"name":"Yunosa","scene":"newwave"},
-    {"name":"2slimey","scene":"newwave"},
-    {"name":"slayr","scene":"newwave"},
-    {"name":"bleood","scene":"newwave"},
-    {"name":"Edward Skeletrix","scene":"newwave"},
-    {"name":"fakemink","scene":"newwave","sheet":"1dl-gwDObu4Sac7RPfUNui2O1DR6Xly7QzSbcUtjkfHA","archives":["fakemink archive"]},
-    {"name":"2hollis","scene":"newwave","sheet":"1wE6F4iSGvQzKv4mDbApu4KOk-XCvJgbm4fuO5IzBx5Q"},
-    {"name":"Nine Vicious","scene":"newwave","sheet":"16JZhKfPIpxjmGvvmgE8fV8H5LWLMFFvV5yvy6UZJccI"},
-    {"name":"LAZER DIM 700","scene":"newwave","aliases":["lazer dim"],"sheet":"18jj-okFS-vApV3-OHPDV2TrFHDil5Ld43WAZX8na_3s"},
-    {"name":"jaydes","scene":"newwave"},
-    {"name":"1oneam","scene":"newwave"},
-    {"name":"Protect","scene":"newwave","hint":"Bbysit"},
-    {"name":"Ohsxnta","scene":"newwave"},
-    {"name":"Fimiguerrero","scene":"newwave"},
-    {"name":"Yhapojj","scene":"newwave"},
-    {"name":"Chuckyy","scene":"newwave"},
-    {"name":"Molly Santana","scene":"newwave"},
-    {"name":"Zukenee","scene":"newwave"},
-
-    {"name":"Tezzus","scene":"oway"},
-    {"name":"diamond*","scene":"oway","aliases":["diamond"]},
-    {"name":"Pz'","scene":"oway","aliases":["pz"]},
-    {"name":"10kdunkin","scene":"oway","aliases":["10k dunkin"]},
-    {"name":"billi0n","scene":"oway","aliases":["billion"]},
-    {"name":"ShawtyRokk","scene":"oway"},
-
-    {"name":"DracoFM","scene":"producer","producer":true},
-    {"name":"F1LTHY","scene":"producer","producer":true,"aliases":["filthy"]},
-    {"name":"Outtatown","scene":"producer","producer":true},
-    {"name":"Star Boy","scene":"producer","producer":true,"aliases":["starboy"]},
-    {"name":"Wegonbeok","scene":"producer","producer":true},
-    {"name":"MexikoDro","scene":"producer","producer":true},
-    {"name":"XanGang","scene":"producer","producer":true},
-    {"name":"BNYX","scene":"producer","producer":true},
-    {"name":"Goyxrd","scene":"producer","producer":true},
-    {"name":"Pi'erre Bourne","scene":"producer","producer":true,"aliases":["pierre bourne"]}
-  ],
-  "leakArchives": ["wonder"]
+ "_doc": "Artists the catalog builder pulls. scene: early|soundcloud|pluggnb|opium|newwave|drain|oway|producer. hint = a known song title used to pick the right artist when names collide. sheet = community tracker Google Sheet ID (unreleased songs). archives = Spotify/Deezer fan-archive accounts whose uploads count as that artist's unreleased songs. producer:true = no 'name a song' prompts.",
+ "artists": [
+  {
+   "name": "Lil B",
+   "scene": "early",
+   "aliases": [
+    "basedgod",
+    "the basedgod"
+   ],
+   "hint": "Wonton Soup"
+  },
+  {
+   "name": "SpaceGhostPurrp",
+   "scene": "early",
+   "aliases": [
+    "sgp"
+   ]
+  },
+  {
+   "name": "Denzel Curry",
+   "scene": "early",
+   "hint": "Ultimate"
+  },
+  {
+   "name": "Xavier Wulf",
+   "scene": "early",
+   "aliases": [
+    "ethelwulf"
+   ]
+  },
+  {
+   "name": "Chris Travis",
+   "scene": "early"
+  },
+  {
+   "name": "Bones",
+   "scene": "early",
+   "aliases": [
+    "teamsesh"
+   ],
+   "hint": "HDMI"
+  },
+  {
+   "name": "Yung Lean",
+   "scene": "early",
+   "hint": "Ginseng Strip 2002"
+  },
+  {
+   "name": "Black Kray",
+   "scene": "early",
+   "aliases": [
+    "sickboyrari"
+   ]
+  },
+  {
+   "name": "Chief Keef",
+   "scene": "early",
+   "aliases": [
+    "sosa"
+   ],
+   "hint": "Love Sosa"
+  },
+  {
+   "name": "Lil Ugly Mane",
+   "scene": "early"
+  },
+  {
+   "name": "Bladee",
+   "scene": "drain",
+   "hint": "Be Nice 2 Me",
+   "sheet": "1skAByFoveXb7PussjJWUBnyl5H8K79LoNpLslRTttNU",
+   "archives": [
+    "Drain Gang Archive"
+   ]
+  },
+  {
+   "name": "Ecco2k",
+   "scene": "drain"
+  },
+  {
+   "name": "Thaiboy Digital",
+   "scene": "drain"
+  },
+  {
+   "name": "XXXTentacion",
+   "scene": "soundcloud",
+   "aliases": [
+    "xxx",
+    "x"
+   ],
+   "hint": "SAD!",
+   "sheet": "1vMEIba05N8zD2iSh_knAkAMzyrm9rtreu1NJeyNZj0I"
+  },
+  {
+   "name": "Lil Peep",
+   "scene": "soundcloud",
+   "aliases": [
+    "peep"
+   ],
+   "hint": "Star Shopping",
+   "sheet": "1kF3KZUjtwiJxxP0GCXJ0VmX7bA2JdwnKa-j1GCaoeC8"
+  },
+  {
+   "name": "Lil Uzi Vert",
+   "scene": "soundcloud",
+   "aliases": [
+    "uzi",
+    "lil uzi"
+   ],
+   "hint": "XO Tour Llif3",
+   "sheet": "1zqqdIds1iwnx4lh29iF1IlraeuqfGhxH9qLNlWOnryo"
+  },
+  {
+   "name": "Playboi Carti",
+   "scene": "soundcloud",
+   "aliases": [
+    "carti",
+    "king vamp"
+   ],
+   "hint": "Magnolia",
+   "sheet": "1ivoRJskby8zykhH_szifY4a1HIQCTnVh6c2WfIfMbkM"
+  },
+  {
+   "name": "Juice WRLD",
+   "scene": "soundcloud",
+   "aliases": [
+    "juice"
+   ],
+   "hint": "Lucid Dreams",
+   "sheet": "1tD3ytt5wPx4zfcefXi5ATeYhIiDaugWjMS46nZrP568"
+  },
+  {
+   "name": "Trippie Redd",
+   "scene": "soundcloud",
+   "aliases": [
+    "trippie"
+   ],
+   "hint": "Love Scars",
+   "sheet": "1hZdGFBZmukWGH4IlnH0NJvphwEct2XEMJT_moTFhTvc",
+   "archives": [
+    "1400 Vault"
+   ]
+  },
+  {
+   "name": "Lil Pump",
+   "scene": "soundcloud",
+   "aliases": [
+    "pump"
+   ],
+   "hint": "Gucci Gang",
+   "sheet": "1DCYxExj15O6YUB4diwhSN_A8xRjAFIAg8KlW5BhgZQI"
+  },
+  {
+   "name": "Smokepurpp",
+   "scene": "soundcloud",
+   "aliases": [
+    "purpp"
+   ],
+   "hint": "Audi.",
+   "sheet": "1KrZM7GA-DeWqUWA4vaxYnY7d0rqxaQyuLhW8LUeh8sk"
+  },
+  {
+   "name": "Ski Mask The Slump God",
+   "scene": "soundcloud",
+   "aliases": [
+    "ski mask",
+    "$ki mask"
+   ],
+   "hint": "Catch Me Outside",
+   "sheet": "1j7_2JVQ2eyaVA6vEQT89R8XhOXUR8KTJbVgTUm_ZD88"
+  },
+  {
+   "name": "Lil Yachty",
+   "scene": "soundcloud",
+   "aliases": [
+    "yachty",
+    "lil boat"
+   ],
+   "hint": "One Night"
+  },
+  {
+   "name": "Lil Tracy",
+   "scene": "soundcloud",
+   "aliases": [
+    "yung bruh"
+   ]
+  },
+  {
+   "name": "$uicideboy$",
+   "scene": "soundcloud",
+   "aliases": [
+    "suicideboys"
+   ]
+  },
+  {
+   "name": "Wifisfuneral",
+   "scene": "soundcloud"
+  },
+  {
+   "name": "Lil Skies",
+   "scene": "soundcloud",
+   "hint": "Red Roses"
+  },
+  {
+   "name": "Comethazine",
+   "scene": "soundcloud"
+  },
+  {
+   "name": "Thouxanbanfauni",
+   "scene": "soundcloud",
+   "aliases": [
+    "fauni"
+   ]
+  },
+  {
+   "name": "UnoTheActivist",
+   "scene": "soundcloud",
+   "aliases": [
+    "uno"
+   ]
+  },
+  {
+   "name": "Famous Dex",
+   "scene": "soundcloud"
+  },
+  {
+   "name": "Lil Xan",
+   "scene": "soundcloud"
+  },
+  {
+   "name": "Yung Bans",
+   "scene": "soundcloud"
+  },
+  {
+   "name": "Warhol.ss",
+   "scene": "soundcloud",
+   "aliases": [
+    "warholss"
+   ]
+  },
+  {
+   "name": "Sheck Wes",
+   "scene": "soundcloud",
+   "hint": "Mo Bamba"
+  },
+  {
+   "name": "Tay-K",
+   "scene": "soundcloud",
+   "hint": "The Race"
+  },
+  {
+   "name": "Ugly God",
+   "scene": "soundcloud"
+  },
+  {
+   "name": "Lil Tecca",
+   "scene": "pluggnb",
+   "aliases": [
+    "tecca"
+   ],
+   "hint": "Ransom",
+   "sheet": "15UwihAVwPeS6eIE1FE1J6v7xiBYFkculVrzhMSIcEew"
+  },
+  {
+   "name": "Summrs",
+   "scene": "pluggnb",
+   "aliases": [
+    "lil summrs",
+    "louiveedee"
+   ],
+   "sheet": "13yCSXxHCBhNGzO6kBGr_MMmRDNLu9j4X10vn_CSBuG4",
+   "archives": [
+    "Summrs Archived",
+    "Summrs Worldwide"
+   ]
+  },
+  {
+   "name": "Autumn!",
+   "scene": "pluggnb",
+   "aliases": [
+    "autumn",
+    "twinuzis",
+    "trapgodbenji"
+   ],
+   "sheet": "1agKp0OhugMnCFrZ1sPt4ipdhGHRTdgyLUiDb344XZQY",
+   "archives": [
+    "Autumn! Archive"
+   ]
+  },
+  {
+   "name": "Kankan",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "KA$HDAMI",
+   "scene": "pluggnb",
+   "aliases": [
+    "kashdami",
+    "ka$hdami",
+    "dami"
+   ],
+   "hint": "Reparations!"
+  },
+  {
+   "name": "SoFaygo",
+   "scene": "pluggnb",
+   "aliases": [
+    "faygo"
+   ],
+   "hint": "Knock Knock",
+   "sheet": "1HISW5L6rWvEW-ZtHrUQRBbjwfOYTrTuzi5fgPkwtObQ"
+  },
+  {
+   "name": "Yeat",
+   "scene": "pluggnb",
+   "aliases": [
+    "lil yeat"
+   ],
+   "hint": "Monëy so big",
+   "sheet": "1FUzAZyTCgFTVxQ--qbCAS2bUk4dsAw6ASxwjURPHbyI"
+  },
+  {
+   "name": "Desire",
+   "scene": "pluggnb",
+   "note": "Summrs' younger brother",
+   "hint": "Better Off Alone"
+  },
+  {
+   "name": "Lil Shine",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "tana",
+   "scene": "pluggnb",
+   "aliases": [
+    "babysantana",
+    "baby santana"
+   ]
+  },
+  {
+   "name": "SSGKobe",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Izaya Tiji",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Iayze",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Rich Amiri",
+   "scene": "pluggnb",
+   "hint": "One Call"
+  },
+  {
+   "name": "Jace!",
+   "scene": "pluggnb",
+   "aliases": [
+    "jace"
+   ]
+  },
+  {
+   "name": "BoofPaxkMooky",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Tony Shhnow",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "1600J",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Dro Kenji",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Riovaz",
+   "scene": "pluggnb"
+  },
+  {
+   "name": "Ken Carson",
+   "scene": "opium",
+   "aliases": [
+    "ken car$on",
+    "kenny"
+   ],
+   "hint": "Yale",
+   "sheet": "1OARID98xCqRaBr8gyQCvI3aD4jKQDGgtedyRaiP_pyo"
+  },
+  {
+   "name": "Destroy Lonely",
+   "scene": "opium",
+   "aliases": [
+    "lone"
+   ],
+   "hint": "NOSTYLIST",
+   "sheet": "1J16EyxHqZD4m0VZ6g6SoY_1GC21TU7P2kk9FeteSKvE"
+  },
+  {
+   "name": "Homixide Gang",
+   "scene": "opium",
+   "aliases": [
+    "hxg",
+    "homixide"
+   ],
+   "sheet": "15eM2g5vJWJIRl1qRYZoGgbKxUXRqIANRKLykqM7ps2M"
+  },
+  {
+   "name": "ApolloRed1",
+   "scene": "opium",
+   "aliases": [
+    "apollo red 1",
+    "apollored"
+   ],
+   "sheet": "1Y5F5onxyeaAbmebnOFYvkDBSHWoU74_YnIIyPXd_QVc"
+  },
+  {
+   "name": "Yung Fazo",
+   "scene": "opium"
+  },
+  {
+   "name": "yvngxchris",
+   "scene": "opium"
+  },
+  {
+   "name": "Lancey Foux",
+   "scene": "opium"
+  },
+  {
+   "name": "OsamaSon",
+   "scene": "newwave",
+   "aliases": [
+    "osama",
+    "pradaumari"
+   ],
+   "hint": "withdrawals",
+   "sheet": "1qbJpawdwnw7IUkZ4FfU3oOF17griNjL59X5z6YFiFlY"
+  },
+  {
+   "name": "Nettspend",
+   "scene": "newwave",
+   "aliases": [
+    "nett"
+   ],
+   "hint": "Drankdrankdrank",
+   "sheet": "16eHcEAYyogbgJ855YNtGpT0zRywZIVvGU-wm3PD_B_c"
+  },
+  {
+   "name": "Che",
+   "scene": "newwave",
+   "hint": "Pizza Time",
+   "sheet": "12xUUfE7amSKb7S3dNc4AHbRdViOdRU_KwSkASOANqv0",
+   "archives": [
+    "chechive"
+   ]
+  },
+  {
+   "name": "Glokk40Spaz",
+   "scene": "newwave",
+   "aliases": [
+    "glokk"
+   ]
+  },
+  {
+   "name": "Xaviersobased",
+   "scene": "newwave",
+   "aliases": [
+    "xavier"
+   ],
+   "sheet": "1-YsBGzZVLBw_Dnm1tgndRJoRkPtS5WKW1XmPBbKPcS0"
+  },
+  {
+   "name": "Prettifun",
+   "scene": "newwave",
+   "aliases": [
+    "pretti fun"
+   ],
+   "sheet": "1gHCN8bRLQPLz0jRRS2UBN9cZbgPLK8VSnAwAEJHzk9I"
+  },
+  {
+   "name": "Lucy Bedroque",
+   "scene": "newwave",
+   "aliases": [
+    "lucy"
+   ],
+   "sheet": "1IlkdclBbOLonkadTBc_N-nK4XFEjKA8ZfIfK35dFNLc"
+  },
+  {
+   "name": "kuru",
+   "scene": "newwave"
+  },
+  {
+   "name": "Pradabagshawty",
+   "scene": "newwave",
+   "aliases": [
+    "prada",
+    "pradabag"
+   ],
+   "archives": [
+    "prada archive"
+   ]
+  },
+  {
+   "name": "rexv2",
+   "scene": "newwave"
+  },
+  {
+   "name": "confetti",
+   "scene": "newwave"
+  },
+  {
+   "name": "xtsy*",
+   "scene": "newwave",
+   "aliases": [
+    "xtsy"
+   ]
+  },
+  {
+   "name": "iyrus",
+   "scene": "newwave"
+  },
+  {
+   "name": "YVES",
+   "scene": "newwave",
+   "aliases": [
+    "yves!",
+    "yves"
+   ],
+   "sheet": "17qA7pviuxvP08vdmoosRqesMKsgk1qMKPaDUcTkmNRI"
+  },
+  {
+   "name": "1300Saint",
+   "scene": "newwave",
+   "aliases": [
+    "1300 saint"
+   ]
+  },
+  {
+   "name": "echstacy",
+   "scene": "newwave"
+  },
+  {
+   "name": "Egobreak",
+   "scene": "newwave"
+  },
+  {
+   "name": "vax",
+   "scene": "newwave"
+  },
+  {
+   "name": "maxon",
+   "scene": "newwave"
+  },
+  {
+   "name": "yit",
+   "scene": "newwave"
+  },
+  {
+   "name": "NoSaint",
+   "scene": "newwave"
+  },
+  {
+   "name": "BabyBartier",
+   "scene": "newwave"
+  },
+  {
+   "name": "Unitus",
+   "scene": "newwave"
+  },
+  {
+   "name": "Sir Untre",
+   "scene": "newwave"
+  },
+  {
+   "name": "Devstacks",
+   "scene": "newwave"
+  },
+  {
+   "name": "Lelo",
+   "scene": "newwave"
+  },
+  {
+   "name": "Yunosa",
+   "scene": "newwave"
+  },
+  {
+   "name": "2slimey",
+   "scene": "newwave"
+  },
+  {
+   "name": "slayr",
+   "scene": "newwave"
+  },
+  {
+   "name": "bleood",
+   "scene": "newwave"
+  },
+  {
+   "name": "Edward Skeletrix",
+   "scene": "newwave"
+  },
+  {
+   "name": "fakemink",
+   "scene": "newwave",
+   "sheet": "1dl-gwDObu4Sac7RPfUNui2O1DR6Xly7QzSbcUtjkfHA",
+   "archives": [
+    "fakemink archive"
+   ]
+  },
+  {
+   "name": "2hollis",
+   "scene": "newwave",
+   "sheet": "1wE6F4iSGvQzKv4mDbApu4KOk-XCvJgbm4fuO5IzBx5Q"
+  },
+  {
+   "name": "Nine Vicious",
+   "scene": "newwave",
+   "sheet": "16JZhKfPIpxjmGvvmgE8fV8H5LWLMFFvV5yvy6UZJccI"
+  },
+  {
+   "name": "LAZER DIM 700",
+   "scene": "newwave",
+   "aliases": [
+    "lazer dim"
+   ],
+   "sheet": "18jj-okFS-vApV3-OHPDV2TrFHDil5Ld43WAZX8na_3s"
+  },
+  {
+   "name": "jaydes",
+   "scene": "newwave"
+  },
+  {
+   "name": "1oneam",
+   "scene": "newwave"
+  },
+  {
+   "name": "Protect",
+   "scene": "newwave",
+   "hint": "Bbysit"
+  },
+  {
+   "name": "Ohsxnta",
+   "scene": "newwave"
+  },
+  {
+   "name": "Fimiguerrero",
+   "scene": "newwave"
+  },
+  {
+   "name": "Yhapojj",
+   "scene": "newwave"
+  },
+  {
+   "name": "Chuckyy",
+   "scene": "newwave"
+  },
+  {
+   "name": "Molly Santana",
+   "scene": "newwave"
+  },
+  {
+   "name": "Zukenee",
+   "scene": "newwave"
+  },
+  {
+   "name": "Tezzus",
+   "scene": "oway"
+  },
+  {
+   "name": "diamond*",
+   "scene": "oway",
+   "aliases": [
+    "diamond"
+   ]
+  },
+  {
+   "name": "Pz'",
+   "scene": "oway",
+   "aliases": [
+    "pz"
+   ]
+  },
+  {
+   "name": "10kdunkin",
+   "scene": "oway",
+   "aliases": [
+    "10k dunkin"
+   ]
+  },
+  {
+   "name": "billi0n",
+   "scene": "oway",
+   "aliases": [
+    "billion"
+   ]
+  },
+  {
+   "name": "ShawtyRokk",
+   "scene": "oway"
+  },
+  {
+   "name": "DracoFM",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "F1LTHY",
+   "scene": "producer",
+   "producer": true,
+   "aliases": [
+    "filthy"
+   ]
+  },
+  {
+   "name": "Outtatown",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "Star Boy",
+   "scene": "producer",
+   "producer": true,
+   "aliases": [
+    "starboy"
+   ]
+  },
+  {
+   "name": "Wegonbeok",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "MexikoDro",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "XanGang",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "BNYX",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "Goyxrd",
+   "scene": "producer",
+   "producer": true
+  },
+  {
+   "name": "Pi'erre Bourne",
+   "scene": "producer",
+   "producer": true,
+   "aliases": [
+    "pierre bourne"
+   ]
+  }
+ ],
+ "leakArchives": [
+  "wonder"
+ ]
 }
